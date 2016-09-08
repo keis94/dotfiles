@@ -95,6 +95,7 @@ if !exists(":DiffOrig")
 		  \ | wincmd p | diffthis
 endif
 
+let g:molokai_original = 1
 set tabstop=2
 set softtabstop=2
 set shiftwidth=2

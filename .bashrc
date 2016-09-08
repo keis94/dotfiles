@@ -117,3 +117,4 @@ fi
 SCALA_HOME="/usr/share/scala-2.11.7"
 PATH="$PATH:$SCALA_HOME/bin:/home/keita/work/cparch/carch/bin"
 WINEARCH=win32
+alias tmux="TERM=xterm-256color tmux"
