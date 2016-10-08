@@ -112,6 +112,7 @@ cnoremap <C-p> <Up>
 cnoremap <C-n> <Down>
 colorscheme molokai
 highlight Normal ctermbg=none
+vmap <C-c> :w !xsel -ib<CR><CR>
 augroup BinaryXXD
   autocmd!
   autocmd BufReadPre  *.bin let &binary =1
