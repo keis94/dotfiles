@@ -103,6 +103,7 @@ set t_Co=256
 set nobackup
 set clipboard=unnamedplus
 set pastetoggle=<<F5>
+set number
 inoremap <C-]> <ESC>
 vnoremap <C-]> <ESC>
 noremap <S-h> 0

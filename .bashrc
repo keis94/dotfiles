@@ -114,6 +114,8 @@ if ! shopt -oq posix; then
   fi
 fi
 
+complete -W  "`grep "Host " ~/.ssh/config| cut -f2 -d' ' | tr "\n" ' '`"  ssh
+
 SCALA_HOME="/usr/share/scala-2.11.7"
 PATH="$PATH:$SCALA_HOME/bin:/home/keita/work/cparch/carch/bin"
 WINEARCH=win32
