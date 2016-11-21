@@ -99,6 +99,7 @@ let g:molokai_original = 1
 set tabstop=2
 set softtabstop=2
 set shiftwidth=2
+set smartindent
 set t_Co=256
 set nobackup
 set clipboard=unnamedplus
@@ -114,6 +115,8 @@ cnoremap <C-n> <Down>
 colorscheme molokai
 highlight Normal ctermbg=none
 vmap <C-c> :w !xsel -ib<CR><CR>
+
+" read binary file with xxd
 augroup BinaryXXD
   autocmd!
   autocmd BufReadPre  *.bin let &binary =1
