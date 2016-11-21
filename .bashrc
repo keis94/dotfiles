@@ -117,6 +117,8 @@ fi
 complete -W  "`grep "Host " ~/.ssh/config| cut -f2 -d' ' | tr "\n" ' '`"  ssh
 
 SCALA_HOME="/usr/share/scala-2.11.7"
-PATH="$PATH:$SCALA_HOME/bin:/home/keita/work/cparch/carch/bin"
+PYENV_ROOT="$HOME/.pyenv"
+PATH="$PYENV_ROOT/bin:$PATH:$SCALA_HOME/bin"
 WINEARCH=win32
 alias tmux="TERM=xterm-256color tmux"
+eval "$(pyenv init -)"
