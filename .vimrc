@@ -105,6 +105,8 @@ set nobackup
 set clipboard=unnamedplus
 set pastetoggle=<<F5>
 set number
+
+" key remapping
 inoremap <C-]> <ESC>
 vnoremap <C-]> <ESC>
 noremap <S-h> 0
