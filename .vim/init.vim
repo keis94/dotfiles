@@ -1,0 +1,1 @@
+/home/keita/.vimrc
