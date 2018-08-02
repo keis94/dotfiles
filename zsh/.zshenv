@@ -2,7 +2,7 @@
 # zmodload zsh/zprof && zprof
 
 # My setting
-export ZDOTDIR=$HOME/.dotfiles/zsh/
+export ZDOTDIR=$HOME/.dotfiles/zsh
 export LANG='en_US.UTF-8'
 export LC_TIME='en_US.UTF-8'
 

@@ -1,0 +1,7 @@
+let g:netrw_dirhistmax  =10
+let g:netrw_dirhist_cnt =5
+let g:netrw_dirhist_1='/home/keita/futurewoods/hp-analysis/twitter'
+let g:netrw_dirhist_2='/home/keita/ctf/kaspersky/backdoor_pi/fs/root/.config'
+let g:netrw_dirhist_3='/home/keita/.config'
+let g:netrw_dirhist_4='/home/keita/futurewoods/datagraphy-server/app/userdata'
+let g:netrw_dirhist_5='/home/keita/.dotfiles/.vim'
