@@ -1,1 +1,0 @@
-/home/keita/dotfiles/.vim

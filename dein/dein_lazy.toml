@@ -1,0 +1,11 @@
+[[plugins]]
+repo = 'plasticboy/vim-markdown'
+
+[[plugins]]
+repo = 'kannokanno/previm'
+hook_add = '''
+	let g:previm_open_cmd = 'google-chrome'
+'''
+
+[[plugins]]
+repo = 'tyru/open-browser.vim'
