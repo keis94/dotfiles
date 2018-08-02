@@ -10,7 +10,7 @@ cd ~/.dotfiles
 ## Test
 When you want to check that `setup.zsh` works well in clean environment, run following commands.
 
-Changes in this repository will be applyed in test environment.
+Local changes in this repository will be applyed in test environment.
 
 ```zsh
 # In your terminal
