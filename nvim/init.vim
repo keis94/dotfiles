@@ -49,6 +49,9 @@ if dein#check_install()
   call dein#install()
 endif
 
+let g:python_host_prog=$PYENV_ROOT.'/versions/neovim-python2/bin/python'
+let g:python3_host_prog=$PYENV_ROOT.'/versions/neovim-python3/bin/python'
+
 " allow backspacing over everything in insert mode
 set backspace=indent,eol,start
 

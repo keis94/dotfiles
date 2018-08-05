@@ -2,6 +2,9 @@
 # autoload -U compinit
 # compinit
 
+# set color
+export TERM="xterm-256color"
+
 # aliases
 alias ls='ls --color=auto'
 alias ll='ls -l --color=auto'
