@@ -17,12 +17,16 @@ ln -sin $PWD/nvim $HOME/.config/nvim
 ln -sin $PWD/dein $HOME/.config/dein
 
 # Install anyenv & pyenv for neovim
-if [ ! -e $HOME/.anyenv ]; then
+if ! zsh -lc 'type anyenv' > /dev/null; then
   git clone https://github.com/riywo/anyenv.git $HOME/.anyenv
-  zsh -lc 'git clone https://github.com/znz/anyenv-update.git $(anyenv root)/plugins/anyenv-update;\
-           anyenv install pyenv'
-  zsh -lc 'git clone https://github.com/pyenv/pyenv-virtualenv.git $(pyenv root)/plugins/pyenv-virtualenv;'
+  zsh -lc 'git clone https://github.com/znz/anyenv-update.git $(anyenv root)/plugins/anyenv-update'
 fi
+
+if ! zsh -lc 'type "pyenv"' > /dev/null; then
+  zsh -lc 'anyenv install pyenv'
+fi
+
+zsh -lc 'git clone https://github.com/pyenv/pyenv-virtualenv.git $(pyenv root)/plugins/pyenv-virtualenv;'
 zsh -lc 'pyenv install 3.6.6 -s;\
          pyenv install 2.7.15 -s;\
          pyenv global 3.6.6;\

@@ -29,6 +29,10 @@ function _ssh {
   compadd `grep 'Host ' ~/.ssh/config --color=none | awk '{print $2}' | sort`;
 }
 
+function _ssh_hosts {
+  compadd `grep 'Host ' ~/.ssh/config --color=none | awk '{print $2}' | sort`;
+}
+
 # sdkman!
 export SDKMAN_DIR="/home/keita/.sdkman"
 [[ -s "/home/keita/.sdkman/bin/sdkman-init.sh" ]] && source "/home/keita/.sdkman/bin/sdkman-init.sh"
