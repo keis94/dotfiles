@@ -63,7 +63,7 @@ if (( $#commands[(i)lesspipe(|.sh)] )); then
 fi
 
 # My Settings
-export PATH="$HOME/.anyenv/bin:$PATH:`yarn global bin`"
+export PATH="$HOME/.anyenv/bin:$PATH"
 eval "$(anyenv init -)"
 eval "$(pyenv virtualenv-init -)"
 export GIT_SSH_COMMAND='ssh -i ~/.ssh/id_rsa -o IdentitiesOnly=yes'
