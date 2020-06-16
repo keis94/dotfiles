@@ -1,0 +1,21 @@
+platform () {
+  case $(uname -s) in
+    Linux*)
+      echo Linux
+      ;;
+    Darwin*)
+      echo Mac
+      ;;
+    *)
+      echo UNKNOWN
+      ;;
+  esac
+}
+
+log () {
+  echo "\e[38;5;038m[+] ${@}\e[0m"
+}
+
+error_log () {
+  echo "\e[38;5;196m[-] ${@}\e[0m"
+}

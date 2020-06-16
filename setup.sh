@@ -2,6 +2,39 @@
 
 set -eu
 
+# Examine platform
+source ./utils
+PLATFORM=$(platform)
+
+if [ $PLATFORM = 'UNKNOWN' ]; then
+  error_log 'Failed to identify your platform. exiting...'
+  exit -1
+fi
+
+if [ $PLATFORM = 'Mac' ]; then
+  log 'Installing brew'
+  # /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh)"
+fi
+
+case $PLATFORM in
+  Linux)
+    apt update
+    INSTALL_COMMAND='apt install -y'
+    ;;
+  Mac)
+    INSTALL_COMMAND='brew install'
+    ;;
+esac
+
+# Install tools
+TOOLS=(git neovim tmux)
+
+for tool in $TOOLS;
+do
+  log "Installing ${tool}"
+  echo $INSTALL_COMMAND $tool
+done
+
 # Copy dotfiles
 ln -sin $HOME/.dotfiles/.tmux.conf $HOME/.tmux.conf
 ln -sin $HOME/.dotfiles/zsh/.zshenv $HOME/.zshenv
