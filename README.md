@@ -1,6 +1,7 @@
 # dotfiles
 
-## Deploy
+## Install
+
 ```zsh
 git clone https://github.com/keis94/dotfiles.git ~/.dotfiles
 cd ~/.dotfiles
@@ -8,6 +9,7 @@ cd ~/.dotfiles
 ```
 
 ## Test
+
 When you want to check that `setup.zsh` works well in clean environment, run following commands.
 
 Local changes in this repository will be applyed in test environment.
