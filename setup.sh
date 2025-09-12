@@ -18,7 +18,7 @@ fi
 
 case $PLATFORM in
   Linux)
-    apt update
+    sudo apt update
     INSTALL_COMMAND='apt install -y'
     ;;
   Mac)
@@ -36,8 +36,8 @@ do
 done
 
 # Copy dotfiles
-ln -sin $HOME/.dotfiles/.tmux.conf $HOME/.tmux.conf
-ln -sin $HOME/.dotfiles/zsh/.zshenv $HOME/.zshenv
+ln -sin $HOME/repo/dotfiles/.tmux.conf $HOME/.tmux.conf
+ln -sin $HOME/repo/dotfiles/zsh/.zshenv $HOME/.zshenv
 
 # git
 git config --global pull.rebase true
@@ -46,7 +46,7 @@ git config --global user.email "keis.vivi@gmail.com"
 git config --global core.editor "nvim"
 
 # Install zplug + prezto
-export ZPLUG_HOME=$HOME/.dotfiles/zsh/.zplug
+export ZPLUG_HOME=$HOME/repo/dotfiles/zsh/.zplug
 [ ! -e $ZPLUG_HOME ] && git clone https://github.com/zplug/zplug $ZPLUG_HOME
 ln -sin $ZPLUG_HOME $HOME/.zplug
 ln -sin $ZPLUG_HOME/repos/sorin-ionescu/prezto $HOME/.zprezto

@@ -2,9 +2,6 @@
 # autoload -U compinit
 # compinit
 
-# set color
-export TERM="xterm-256color"
-
 # aliases
 alias ls='ls --color=auto'
 alias ll='ls -l --color=auto'
@@ -51,3 +48,9 @@ zplug load # --verbose
 #   zprof | less
 # fi
 
+
+alias claude="/home/keis/.claude/local/claude"
+
+# apply PATH to binaries that installed in local
+. "$HOME/.local/share/../bin/env"
+[ -f "/home/keis/.ghcup/env" ] && . "/home/keis/.ghcup/env" # ghcup-env
