@@ -13,14 +13,14 @@ vim.env.DATA = data_home
 vim.g.python3_host_prog = vim.fn.expand("$HOME") .. "/virtualenvs/neovim/bin/python"
 
 -- Basic settings
-vim.opt.backspace = { "indent", "eol", "start" }  -- allow backspacing over everything in insert mode
+vim.opt.backspace = { "indent", "eol", "start" } -- allow backspacing over everything in insert mode
 
 -- Backup settings
-vim.opt.backup = false  -- do not keep a backup file, use versions instead
-vim.opt.history = 10000        -- keep 200 lines of command line history
-vim.opt.ruler = true         -- show the cursor position all the time
-vim.opt.showcmd = true       -- display incomplete commands
-vim.opt.incsearch = true     -- do incremental searching
+vim.opt.backup = false   -- do not keep a backup file, use versions instead
+vim.opt.history = 10000  -- keep 200 lines of command line history
+vim.opt.ruler = true     -- show the cursor position all the time
+vim.opt.showcmd = true   -- display incomplete commands
+vim.opt.incsearch = true -- do incremental searching
 
 -- Key mappings
 -- Don"t use Ex mode, use Q for formatting
@@ -35,7 +35,7 @@ if vim.fn.has("mouse") == 1 then
   vim.opt.mouse = "a"
 end
 
-vim.opt.autoindent = true  -- always set autoindenting on
+vim.opt.autoindent = true -- always set autoindenting on
 
 -- DiffOrig command
 if vim.fn.exists(":DiffOrig") == 0 then
@@ -45,8 +45,8 @@ if vim.fn.exists(":DiffOrig") == 0 then
 end
 
 -- Set filetype for specific extensions
-vim.api.nvim_create_autocmd({"BufRead", "BufNewFile"}, {
-  pattern = {"*.sage", "*.pyx", "*.spyx"},
+vim.api.nvim_create_autocmd({ "BufRead", "BufNewFile" }, {
+  pattern = { "*.sage", "*.pyx", "*.spyx" },
   callback = function()
     vim.bo.filetype = "python"
   end
@@ -56,15 +56,15 @@ vim.api.nvim_create_autocmd({"BufRead", "BufNewFile"}, {
 -- vim.g.molokai_original = 1
 
 -- Editor settings
-vim.opt.expandtab = true        -- use spaces instead of tabs
-vim.opt.tabstop = 2             -- number of spaces tabs count for
-vim.opt.softtabstop = 2         -- number of spaces tabs count for in insert mode
-vim.opt.shiftwidth = 2          -- size of an indent
-vim.opt.smartindent = true      -- smart autoindenting
-vim.opt.termguicolors = true    -- enable 24-bit RGB colors (replaces t_Co=256)
-vim.opt.backup = false          -- disable backup (overrides earlier setting)
-vim.opt.clipboard = "unnamedplus"  -- use system clipboard
-vim.opt.number = true           -- show line numbers
+vim.opt.expandtab = true          -- use spaces instead of tabs
+vim.opt.tabstop = 2               -- number of spaces tabs count for
+vim.opt.softtabstop = 2           -- number of spaces tabs count for in insert mode
+vim.opt.shiftwidth = 2            -- size of an indent
+vim.opt.smartindent = true        -- smart autoindenting
+vim.opt.termguicolors = true      -- enable 24-bit RGB colors (replaces t_Co=256)
+vim.opt.backup = false            -- disable backup (overrides earlier setting)
+vim.opt.clipboard = "unnamedplus" -- use system clipboard
+vim.opt.number = true             -- show line numbers
 
 -- Paste toggle (F5 key)
 vim.keymap.set("n", "<F5>", ":set paste!<CR>", { silent = true, noremap = true })
@@ -129,6 +129,7 @@ vim.api.nvim_create_autocmd("BufWritePost", {
 -- lazy.vim
 -- vim.o.bg = "dark"
 require("config.lazy")
+require("config.lsp")
 
 vim.cmd.colorscheme "everforest"
 
@@ -138,3 +139,5 @@ vim.keymap.set('n', '<leader>ff', builtin.find_files, { desc = 'Telescope find f
 vim.keymap.set('n', '<leader>fg', builtin.live_grep, { desc = 'Telescope live grep' })
 vim.keymap.set('n', '<leader>fb', builtin.buffers, { desc = 'Telescope buffers' })
 vim.keymap.set('n', '<leader>fh', builtin.help_tags, { desc = 'Telescope help tags' })
+vim.keymap.set('n', '<leader>fkm', builtin.keymaps, { desc = 'Telescope normal mode keymappings' })
+vim.keymap.set('n', '<leader>fkm', builtin.keymaps, { desc = 'Telescope normal mode keymappings' })
