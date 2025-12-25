@@ -1,6 +1,7 @@
-vim.lsp.enable({
-  "clangd",
-  "lua_ls",
+vim.opt.completeopt = { "menuone", "preview", "noinsert" }
+
+require("mason-lspconfig").setup({
+  ensure_installed = { "clangd", "lua_ls", "bashls" },
 })
 
 -- 言語サーバーがアタッチされた時に呼ばれる
@@ -13,7 +14,6 @@ vim.api.nvim_create_autocmd("LspAttach", {
     -- デフォルトで設定されている言語サーバー用キーバインドに設定を追加する
     -- See https://neovim.io/doc/user/lsp.html#lsp-defaults
     -- 言語サーバーのクライアントがLSPで定められた機能を実装していたら設定を追加するという流れ
-
     if client:supports_method("textDocument/definition") then
       vim.keymap.set("n", "gd", vim.lsp.buf.definition, { buffer = buf, desc = "Go to definition" })
     end

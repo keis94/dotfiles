@@ -49,8 +49,13 @@ zplug load # --verbose
 # fi
 
 
-alias claude="/home/keis/.claude/local/claude"
 
 # apply PATH to binaries that installed in local
 . "$HOME/.local/share/../bin/env"
 [ -f "/home/keis/.ghcup/env" ] && . "/home/keis/.ghcup/env" # ghcup-env
+
+. "$HOME/.local/bin/env"
+
+# mise
+eval "$(~/.local/bin/mise activate zsh)"
+

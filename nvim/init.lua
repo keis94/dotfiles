@@ -9,9 +9,6 @@ local data_home = vim.env.XDG_DATA_HOME or vim.fn.expand("$HOME/.local/share")
 vim.env.CONFIG = config_home
 vim.env.DATA = data_home
 
--- Providers
-vim.g.python3_host_prog = vim.fn.expand("$HOME") .. "/virtualenvs/neovim/bin/python"
-
 -- Basic settings
 vim.opt.backspace = { "indent", "eol", "start" } -- allow backspacing over everything in insert mode
 
@@ -140,4 +137,5 @@ vim.keymap.set('n', '<leader>fg', builtin.live_grep, { desc = 'Telescope live gr
 vim.keymap.set('n', '<leader>fb', builtin.buffers, { desc = 'Telescope buffers' })
 vim.keymap.set('n', '<leader>fh', builtin.help_tags, { desc = 'Telescope help tags' })
 vim.keymap.set('n', '<leader>fkm', builtin.keymaps, { desc = 'Telescope normal mode keymappings' })
-vim.keymap.set('n', '<leader>fkm', builtin.keymaps, { desc = 'Telescope normal mode keymappings' })
+
+vim.keymap.set('n', '<leader>rn', '<cmd>lua vim.lsp.buf.rename()<CR>', { silent = true, desc = 'LSP Rename' })

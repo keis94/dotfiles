@@ -12,10 +12,10 @@ platform () {
   esac
 }
 
-log () {
-  echo "\e[38;5;038m[+] ${@}\e[0m"
+info_log () {
+  printf '\033[38;5;38m[+] %s\033[0m\n' "$*"
 }
 
 error_log () {
-  echo "\e[38;5;196m[-] ${@}\e[0m"
+  printf '\033[38;5;196m[-] %s\033[0m\n' "$*"
 }

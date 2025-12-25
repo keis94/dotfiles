@@ -1,8 +1,60 @@
-#!/bin/zsh
+#!/bin/bash
 
-set -eu
+set -euo pipefail
 
-# Examine platform
+source ./utils
+export PATH="$HOME/.local/bin:$PATH"
+PLATFORM=$(platform)
+TOOLS_PACKAGE_MANAGER=(zsh git tmux fzf unzip)
+TOOLS_MISE=(gh node@lts)
+
+is_missing () {
+  local tool="$1"
+
+  if ! command -v "$tool" >/dev/null 2>&1; then
+    info_log "${tool} will be installed"
+    return 0
+  fi
+  return 1
+}
+
+install_package () {
+  local tool="$1"
+
+  if ! is_missing "$tool"; then
+    info_log "$tool has been installed"
+    return 0
+  fi
+
+  info_log "Installing $tool with the package manager"
+  case $PLATFORM in
+    Linux)
+      if [[ -z "${APT_UPDATE_DONE:-}" ]]; then
+        sudo apt-get update
+        APT_UPDATE_DONE=1
+      fi
+      sudo apt install -y "$tool"
+      ;;
+    Mac)
+      brew install "$tool"
+      ;;
+  esac
+}
+
+mise_install () {
+  local spec="$1"
+  local tool="${spec%%@*}"
+
+  if ! is_missing "$tool"; then
+    info_log "$tool has been installed"
+    return 0
+  fi
+
+  info_log "Installing $tool with mise"
+  mise install "$spec"
+  mise use "$spec" --global
+}
+
 source ./utils
 PLATFORM=$(platform)
 
@@ -12,72 +64,77 @@ if [ $PLATFORM = 'UNKNOWN' ]; then
 fi
 
 if [ $PLATFORM = 'Mac' ]; then
-  log 'Installing brew'
+  info_log 'Installing brew'
   # /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh)"
 fi
 
-case $PLATFORM in
-  Linux)
-    sudo apt update
-    INSTALL_COMMAND='apt install -y'
-    ;;
-  Mac)
-    INSTALL_COMMAND='brew install'
-    ;;
-esac
+# WSL 
+if [ /proc/sys/fs/binfmt_misc/WSLInterop ]; then
+  info_log "WSL detected. Run \"wsl --shutdown\" to apply the settings."
+  sudo ln -sin $HOME/repo/dotfiles/wsl.conf /etc/wsl.conf
+fi
 
-# Install tools
-TOOLS=(git neovim tmux)
+info_log "Installing tools with the setup scripts"
+# mise
+if is_missing mise; then
+  curl https://mise.run | sh
+fi
 
-for tool in $TOOLS;
-do
-  log "Installing ${tool}"
-  echo $INSTALL_COMMAND $tool
+# uv
+if is_missing uv; then
+  curl -LsSf https://astral.sh/uv/install.sh | sh
+  uv python install --default
+fi
+
+# Claude code
+if is_missing claude; then
+  curl -fsSL https://claude.ai/install.sh | bash
+fi
+
+# neovim
+if is_missing nvim; then
+  curl -LO https://github.com/neovim/neovim/releases/latest/download/nvim-linux-x86_64.tar.gz
+  sudo rm -rf /opt/nvim-linux-x86_64
+  sudo tar -C /opt -xzf nvim-linux-x86_64.tar.gz
+  rm ./nvim-linux-x86_64.tar.gz
+fi
+
+info_log "Install tools with the package manager"
+for tool in ${TOOLS_PACKAGE_MANAGER[@]}; do
+  install_package $tool
 done
 
-# Copy dotfiles
+info_log "Install tools with the package manager"
+for tool in ${TOOLS_MISE[@]}; do
+  mise_install $tool
+done
+
+info_log "Copy dotfiles"
 ln -sin $HOME/repo/dotfiles/.tmux.conf $HOME/.tmux.conf
 ln -sin $HOME/repo/dotfiles/zsh/.zshenv $HOME/.zshenv
+# neovim
+mkdir -p ~/.config
+ln -sin $PWD/nvim $HOME/.config/nvim
 
-# git
+info_log "Configure git"
 git config --global pull.rebase true
 git config --global user.name "keis94"
 git config --global user.email "keis.vivi@gmail.com"
 git config --global core.editor "nvim"
 
-# Install zplug + prezto
+info_log "Install zplug + prezto"
 export ZPLUG_HOME=$HOME/repo/dotfiles/zsh/.zplug
 [ ! -e $ZPLUG_HOME ] && git clone https://github.com/zplug/zplug $ZPLUG_HOME
 ln -sin $ZPLUG_HOME $HOME/.zplug
+zsh -ci "zplug install"
+# workaround: setting Prezto config directory after `zplug install`
 ln -sin $ZPLUG_HOME/repos/sorin-ionescu/prezto $HOME/.zprezto
 
-# Setting for nvim + dein
-mkdir -p ~/.config
-ln -sin $PWD/nvim $HOME/.config/nvim
-ln -sin $PWD/dein $HOME/.config/dein
+info_log "Generate locale en_US.utf8"
+sudo locale-gen en_US.utf8
 
-# Install anyenv & pyenv for neovim
-if ! zsh -lc 'type anyenv' > /dev/null; then
-  git clone https://github.com/riywo/anyenv.git $HOME/.anyenv
-  zsh -lc 'git clone https://github.com/znz/anyenv-update.git $(anyenv root)/plugins/anyenv-update'
-fi
+info_log "zplug install"
+zsh -ci 'source $ZDOTDIR/.zshrc; zplug install'
 
-if ! zsh -lc 'type "pyenv"' > /dev/null; then
-  zsh -lc 'anyenv install pyenv'
-fi
-
-zsh -lc 'git clone https://github.com/pyenv/pyenv-virtualenv.git $(pyenv root)/plugins/pyenv-virtualenv;'
-zsh -lc 'pyenv install 3.6.6 -s;\
-         pyenv install 2.7.15 -s;\
-         pyenv global 3.6.6;\
-         pyenv virtualenv 3.6.6 neovim-python3;\
-         pyenv virtualenv 2.7.15 neovim-python2;\
-         pyenv activate neovim-python3;\
-         pip install neovim;\
-         pyenv deactivate;\
-         pyenv activate neovim-python2;\
-         pip install neovim'
-
-
-zsh -c 'source $ZDOTDIR/.zshrc; zplug install'
+chsh -s /bin/zsh
 exec zsh -li
