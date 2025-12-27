@@ -91,6 +91,37 @@ if is_missing claude; then
   curl -fsSL https://claude.ai/install.sh | bash
 fi
 
+# docker
+if is_missing docker; then
+  case $PLATFORM in
+  Linux)
+    info_log "adding keyrings and apt source..."
+    # https://docs.docker.com/engine/install/ubuntu/
+    sudo apt update
+    sudo apt install ca-certificates curl
+    sudo install -m 0755 -d /etc/apt/keyrings
+    sudo curl -fsSL https://download.docker.com/linux/ubuntu/gpg -o /etc/apt/keyrings/docker.asc
+    sudo chmod a+r /etc/apt/keyrings/docker.asc
+
+    # Add the repository to Apt sources:
+    sudo tee /etc/apt/sources.list.d/docker.sources <<EOF
+Types: deb
+URIs: https://download.docker.com/linux/ubuntu
+Suites: $(. /etc/os-release && echo "${UBUNTU_CODENAME:-$VERSION_CODENAME}")
+Components: stable
+Signed-By: /etc/apt/keyrings/docker.asc
+EOF
+
+    sudo apt update
+    sudo apt install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
+    ;;
+  Mac)
+    info_log "install colima instead of Docker Desktop"
+    brew install colima
+    ;;
+  esac
+fi
+
 # neovim
 if is_missing nvim; then
   curl -LO https://github.com/neovim/neovim/releases/latest/download/nvim-linux-x86_64.tar.gz
