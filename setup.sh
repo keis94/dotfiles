@@ -6,7 +6,13 @@ source ./utils
 export PATH="$HOME/.local/bin:$PATH"
 PLATFORM=$(platform)
 TOOLS_PACKAGE_MANAGER=(zsh git tmux fzf unzip)
-TOOLS_MISE=(gh node@lts)
+TOOLS_MISE=(gh node@lts bun uv)
+DOTFILES=(
+  ".tmux.conf $HOME/.tmux.conf"
+  "zsh/.zshenv $HOME/.zshenv"
+  "zsh/.zplug $HOME/.zplug"
+  "nvim $HOME/.config/nvim"
+)
 
 is_missing () {
   local tool="$1"
@@ -16,6 +22,25 @@ is_missing () {
     return 0
   fi
   return 1
+}
+
+ensure_symlink () {
+  local src=$(realpath "$1")
+  local dest="$2"
+
+  if [[ -L "$dest" && $(readlink "$dest") == "$src" ]]; then
+    return 0
+  fi
+
+  # If the target already exists (but isn't a symlink), back it up or delete it first.
+  if [[ -e "$dest" && ! -L "$dest" ]]; then
+    echo "Warning: $dest already exists. Backing up to $dest.bak"
+    mv "$dest" "${dest}.bak"
+  fi
+
+  mkdir -p "$(dirname "$dest")"
+  ln -sfn "$src" "$dest"
+  info_log "Linked: $dest -> $src"
 }
 
 install_package () {
@@ -68,11 +93,6 @@ if [ $PLATFORM = 'Mac' ]; then
   # /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh)"
 fi
 
-# WSL 
-if [ /proc/sys/fs/binfmt_misc/WSLInterop ]; then
-  info_log "WSL detected. Run \"wsl --shutdown\" to apply the settings."
-  sudo ln -sin $HOME/repo/dotfiles/wsl.conf /etc/wsl.conf
-fi
 
 info_log "Installing tools with the setup scripts"
 # mise
@@ -140,12 +160,21 @@ for tool in ${TOOLS_MISE[@]}; do
   mise_install $tool
 done
 
-info_log "Copy dotfiles"
-ln -sin $HOME/repo/dotfiles/.tmux.conf $HOME/.tmux.conf
-ln -sin $HOME/repo/dotfiles/zsh/.zshenv $HOME/.zshenv
-# neovim
-mkdir -p ~/.config
-ln -sin $PWD/nvim $HOME/.config/nvim
+if [[ "$(which python3)" != *"/.local/bin/"* ]]; then
+  info_log "Use uv's python and python3, overwriting the current ones."
+  uv python install --default
+fi
+
+info_log "Replace dotfiles"
+for entry in "${DOTFILES[@]}"; do
+  ensure_symlink $entry
+done
+
+# WSL
+if [ /proc/sys/fs/binfmt_misc/WSLInterop ]; then
+  info_log "WSL detected. Run \"wsl --shutdown\" to apply the settings when it's updated."
+  ensure_symlink wsl.conf /etc/wsl.conf
+fi
 
 info_log "Configure git"
 git config --global pull.rebase true
@@ -156,7 +185,6 @@ git config --global core.editor "nvim"
 info_log "Install zplug + prezto"
 export ZPLUG_HOME=$HOME/repo/dotfiles/zsh/.zplug
 [ ! -e $ZPLUG_HOME ] && git clone https://github.com/zplug/zplug $ZPLUG_HOME
-ln -sin $ZPLUG_HOME $HOME/.zplug
 zsh -ci "zplug install"
 # workaround: setting Prezto config directory after `zplug install`
 ln -sin $ZPLUG_HOME/repos/sorin-ionescu/prezto $HOME/.zprezto
