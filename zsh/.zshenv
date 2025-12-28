@@ -3,8 +3,7 @@
 
 # My setting
 export ZDOTDIR=$HOME/repo/dotfiles/zsh
-export LANG='en_US.utf8'
-export LC_TIME='en_US.utf8'
+export LC_ALL='en_US.utf8'
 
 # prezto
 # Ensure that a non-login, non-interactive shell has a defined environment.
