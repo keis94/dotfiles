@@ -25,6 +25,22 @@ is_missing () {
 }
 
 ensure_symlink () {
+  local with_sudo=0
+
+  while (($#)); do
+    case "$1" in
+      --sudo)    with_sudo=1; shift ;;
+      --)        shift; break ;;  # ここから先はポジション引数
+      -*)        echo "Unknown option: $1" >&2; return 2 ;;
+      *)         break ;;
+    esac
+  done
+
+  if (($# != 2)); then
+    echo "Usage: ensure_symlink [--sudo] -- <src> <dest>" >&2
+    return 2
+  fi
+
   local src=$(realpath "$1")
   local dest="$2"
 
@@ -39,7 +55,11 @@ ensure_symlink () {
   fi
 
   mkdir -p "$(dirname "$dest")"
-  ln -sfn "$src" "$dest"
+  if ((with_sudo)); then
+    sudo ln -sfn "$src" "$dest"
+  else
+    ln -sfn "$src" "$dest"
+  fi
   info_log "Linked: $dest -> $src"
 }
 
@@ -83,9 +103,6 @@ mise_install () {
   mise install "$spec"
   mise use "$spec" --global
 }
-
-source ./utils
-PLATFORM=$(platform)
 
 if [ $PLATFORM = 'UNKNOWN' ]; then
   error_log 'Failed to identify your platform. exiting...'
@@ -205,7 +222,7 @@ if [ /proc/sys/fs/binfmt_misc/WSLInterop ]; then
   ensure_symlink wsl.conf /etc/wsl.conf
   # appendWindowsPath is false, so manually set symlink for launching windows apps
   # (vscode only, at the time of writing)
-  sudo ln -sfn '/mnt/c/Users/keis/AppData/Local/Programs/Microsoft VS Code/bin/code' /usr/local/bin/code
+  ensure_symlink --sudo "/mnt/c/Users/$USER/AppData/Local/Programs/Microsoft VS Code/bin/code" /usr/local/bin/code
 fi
 
 info_log "Configure git"
