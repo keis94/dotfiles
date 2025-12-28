@@ -189,6 +189,8 @@ if is_missing gcc && ismissing g++ && is_missing make; then
   ghcup install ghc --set recommended
   ghcup install cabal --set recommended
   ghcup install hls --set recommended
+  # ~/.ghcup/env is not installed in ghcup 0.1.50.2 when using mise
+  cp ghcup/ghcup-env ~/.ghcup/env
 fi
 
 
