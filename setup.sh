@@ -178,9 +178,9 @@ if is_missing /opt/nvim-*/bin/nvim; then
       curl -LO https://github.com/neovim/neovim/releases/latest/download/nvim-macos-arm64.tar.gz
     ;;
   esac
-  sudo rm -rf /opt/nvim-macos-arm64
-  sudo tar -C /opt -xzf nvim-macos-arm64.tar.gz
-  rm ./nvim-macos-arm64.tar.gz
+  sudo rm -rf /opt/nvim-*
+  sudo tar -C /opt -xzf nvim-*.tar.gz
+  rm ./nvim-*.tar.gz
 fi
 
 info_log "Install tools with the package manager"
