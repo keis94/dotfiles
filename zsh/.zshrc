@@ -43,19 +43,33 @@ zplug "nobeans/zsh-sdkman"
 
 zplug load # --verbose
 
-# zprof
-# if (which zprof > /dev/null) ;then
-#   zprof | less
-# fi
-
-
-
 # apply PATH to binaries that installed in local
-. "$HOME/.local/share/../bin/env"
-[ -f "/home/keis/.ghcup/env" ] && . "/home/keis/.ghcup/env" # ghcup-env
-
 . "$HOME/.local/bin/env"
+
 
 # mise
 eval "$(~/.local/bin/mise activate zsh)"
 
+# rust toolchain
+. "$HOME/.cargo/env"
+
+# haskell
+[ -f "/home/keis/.ghcup/env" ] && . "/home/keis/.ghcup/env" # ghcup-env
+
+# neovim
+alias vim=nvim
+export PATH="/opt/nvim-linux-x86_64/bin:$PATH"
+
+# git
+export GIT_SSH_COMMAND='ssh -i ~/.ssh/id_rsa -o IdentitiesOnly=yes'
+
+# android
+export ANDROID_HOME=$HOME/Android/Sdk
+export PATH=$ANDROID_HOME/cmdline-tools/latest/bin:$PATH
+export PATH=$ANDROID_HOME/platform-tools:$PATH
+export PATH=$ANDROID_HOME/emulator:$PATH
+
+# zprof
+# if (which zprof > /dev/null) ;then
+#   zprof | less
+# fi

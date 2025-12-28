@@ -6,7 +6,7 @@ source ./utils
 export PATH="$HOME/.local/bin:$PATH"
 PLATFORM=$(platform)
 TOOLS_PACKAGE_MANAGER=(zsh git tmux fzf unzip)
-TOOLS_MISE=(gh node@lts bun uv)
+TOOLS_MISE=(gh node@lts bun uv ghcup)
 DOTFILES=(
   ".tmux.conf $HOME/.tmux.conf"
   "zsh/.zshenv $HOME/.zshenv"
@@ -70,6 +70,10 @@ mise_install () {
   local spec="$1"
   local tool="${spec%%@*}"
 
+  if [[ -z "${MISE_ACTIVATE_DONE:-}" ]]; then
+    eval "$(~/.local/bin/mise activate bash)"
+    MISE_ACTIVATE_DONE=1
+  fi
   if ! is_missing "$tool"; then
     info_log "$tool has been installed"
     return 0
@@ -93,7 +97,6 @@ if [ $PLATFORM = 'Mac' ]; then
   # /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh)"
 fi
 
-
 info_log "Installing tools with the setup scripts"
 # mise
 if is_missing mise; then
@@ -111,20 +114,26 @@ if is_missing claude; then
   curl -fsSL https://claude.ai/install.sh | bash
 fi
 
+# rustup
+. $HOME/.cargo/env
+if is_missing rustup; then
+  curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
+fi
+
 # docker
 if is_missing docker; then
   case $PLATFORM in
-  Linux)
-    info_log "adding keyrings and apt source..."
-    # https://docs.docker.com/engine/install/ubuntu/
-    sudo apt update
-    sudo apt install ca-certificates curl
-    sudo install -m 0755 -d /etc/apt/keyrings
-    sudo curl -fsSL https://download.docker.com/linux/ubuntu/gpg -o /etc/apt/keyrings/docker.asc
-    sudo chmod a+r /etc/apt/keyrings/docker.asc
+    Linux)
+      info_log "adding keyrings and apt source..."
+      # https://docs.docker.com/engine/install/ubuntu/
+      sudo apt update
+      sudo apt install ca-certificates curl
+      sudo install -m 0755 -d /etc/apt/keyrings
+      sudo curl -fsSL https://download.docker.com/linux/ubuntu/gpg -o /etc/apt/keyrings/docker.asc
+      sudo chmod a+r /etc/apt/keyrings/docker.asc
 
-    # Add the repository to Apt sources:
-    sudo tee /etc/apt/sources.list.d/docker.sources <<EOF
+      # Add the repository to Apt sources:
+      sudo tee /etc/apt/sources.list.d/docker.sources <<EOF
 Types: deb
 URIs: https://download.docker.com/linux/ubuntu
 Suites: $(. /etc/os-release && echo "${UBUNTU_CODENAME:-$VERSION_CODENAME}")
@@ -132,22 +141,29 @@ Components: stable
 Signed-By: /etc/apt/keyrings/docker.asc
 EOF
 
-    sudo apt update
-    sudo apt install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
-    ;;
-  Mac)
-    info_log "install colima instead of Docker Desktop"
-    brew install colima
-    ;;
+      sudo apt update
+      sudo apt install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
+      ;;
+    Mac)
+      info_log "install colima instead of Docker Desktop"
+      brew install colima
+      ;;
   esac
 fi
 
 # neovim
-if is_missing nvim; then
-  curl -LO https://github.com/neovim/neovim/releases/latest/download/nvim-linux-x86_64.tar.gz
-  sudo rm -rf /opt/nvim-linux-x86_64
-  sudo tar -C /opt -xzf nvim-linux-x86_64.tar.gz
-  rm ./nvim-linux-x86_64.tar.gz
+if is_missing /opt/nvim-*/bin/nvim; then
+  case $PLATFORM in
+    Linux)
+      curl -LO https://github.com/neovim/neovim/releases/latest/download/nvim-linux-x86_64.tar.gz
+    ;;
+    Mac)
+      curl -LO https://github.com/neovim/neovim/releases/latest/download/nvim-macos-arm64.tar.gz
+    ;;
+  esac
+  sudo rm -rf /opt/nvim-macos-arm64
+  sudo tar -C /opt -xzf nvim-macos-arm64.tar.gz
+  rm ./nvim-macos-arm64.tar.gz
 fi
 
 info_log "Install tools with the package manager"
@@ -160,10 +176,21 @@ for tool in ${TOOLS_MISE[@]}; do
   mise_install $tool
 done
 
+# python
 if [[ "$(which python3)" != *"/.local/bin/"* ]]; then
   info_log "Use uv's python and python3, overwriting the current ones."
   uv python install --default
 fi
+
+# haskell
+if is_missing gcc && ismissing g++ && is_missing make; then
+  # TODO: support macOS
+  install_package build-essential
+  ghcup install ghc --set recommended
+  ghcup install cabal --set recommended
+  ghcup install hls --set recommended
+fi
+
 
 info_log "Replace dotfiles"
 for entry in "${DOTFILES[@]}"; do
@@ -174,6 +201,9 @@ done
 if [ /proc/sys/fs/binfmt_misc/WSLInterop ]; then
   info_log "WSL detected. Run \"wsl --shutdown\" to apply the settings when it's updated."
   ensure_symlink wsl.conf /etc/wsl.conf
+  # appendWindowsPath is false, so manually set symlink for launching windows apps
+  # (vscode only, at the time of writing)
+  sudo ln -sfn '/mnt/c/Users/keis/AppData/Local/Programs/Microsoft VS Code/bin/code' /usr/local/bin/code
 fi
 
 info_log "Configure git"
@@ -190,6 +220,7 @@ zsh -ci "zplug install"
 ln -sin $ZPLUG_HOME/repos/sorin-ionescu/prezto $HOME/.zprezto
 
 info_log "Generate locale en_US.utf8"
+# TODO: support macOS
 sudo locale-gen en_US.utf8
 
 info_log "zplug install"
