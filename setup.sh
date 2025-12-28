@@ -234,16 +234,37 @@ git config --global core.editor "nvim"
 info_log "Install zplug + prezto"
 export ZPLUG_HOME=$HOME/repo/dotfiles/zsh/.zplug
 [ ! -e $ZPLUG_HOME ] && git clone https://github.com/zplug/zplug $ZPLUG_HOME
-zsh -ci "zplug install"
+zsh -c """
+  source "$ZPLUG_HOME/init.zsh" || exit 1
+  source "zsh/.zshrc" || exit 1
+  zplug check || zplug install
+"""
 # workaround: setting Prezto config directory after `zplug install`
-ln -sin $ZPLUG_HOME/repos/sorin-ionescu/prezto $HOME/.zprezto
+ensure_symlink $ZPLUG_HOME/repos/sorin-ionescu/prezto $HOME/.zprezto
 
-info_log "Generate locale en_US.utf8"
-# TODO: support macOS
-sudo locale-gen en_US.utf8
+if ! (locale -a | grep -i en_us.UTF8 > /dev/null 2>&1); then
+  case $PLATFORM in
+  Linux)
+    info_log "Generate locale en_US.utf8"
+    sudo locale-gen en_US.utf8
+    ;;
+  Mac)
+    error_log """locale en_US.utf8 is not found. Create it manually
+    see: https://apple.stackexchange.com/questions/384388/how-to-add-a-new-locale-to-macos-catalina
+    """
+    ;;
+  esac
+fi
 
-info_log "zplug install"
-zsh -ci 'source $ZDOTDIR/.zshrc; zplug install'
+# chsh
+current_shell=$(
+  grep $USER /etc/passwd | awk -F':' '{print $7}'
+)
+zsh_path="$(command -v zsh)"
+if [[ "$current_shell" != "$zsh_path" ]]; then
+  info_log "Set zsh as default shell"
+  chsh -s "$zsh_path"
+fi
 
-chsh -s /bin/zsh
 exec zsh -li
+
