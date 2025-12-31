@@ -1,60 +1,102 @@
-# # completion
-# autoload -U compinit
-# compinit
+# ==============================================================================
+# Zsh Options (migrated from Prezto)
+# ==============================================================================
 
-# aliases
+# History
+HISTFILE="${ZDOTDIR:-$HOME}/.zsh_history"
+HISTSIZE=65536
+SAVEHIST=65536
+setopt BANG_HIST              # Treat '!' specially during expansion
+setopt EXTENDED_HISTORY       # Write timestamps to history
+setopt SHARE_HISTORY          # Share history between sessions
+setopt HIST_EXPIRE_DUPS_FIRST # Expire duplicates first
+setopt HIST_IGNORE_DUPS       # Ignore duplicates
+setopt HIST_IGNORE_ALL_DUPS   # Remove older duplicate
+setopt HIST_FIND_NO_DUPS      # Don't display duplicates during search
+setopt HIST_IGNORE_SPACE      # Ignore commands starting with space
+setopt HIST_SAVE_NO_DUPS      # Don't write duplicates
+setopt HIST_VERIFY            # Don't execute immediately on history expansion
+
+# Directory
+setopt AUTO_CD                # cd without typing cd
+setopt AUTO_PUSHD             # Push old directory onto stack
+setopt PUSHD_IGNORE_DUPS      # Don't push duplicates
+setopt PUSHD_SILENT           # Don't print stack after pushd/popd
+setopt PUSHD_TO_HOME          # pushd without args goes to home
+DIRSTACKSIZE=20
+
+# Editor / Key bindings
+bindkey -e                    # Emacs key bindings
+WORDCHARS='*?_-.[]~&;!#$%^(){}<>'  # Characters treated as part of a word
+
+# ==============================================================================
+# Completion
+# ==============================================================================
+
+autoload -Uz compinit
+compinit -d "${ZDOTDIR:-$HOME}/.zcompdump"
+
+# Completion options (from Prezto)
+setopt COMPLETE_IN_WORD       # Complete from cursor position
+setopt ALWAYS_TO_END          # Move cursor to end after completion
+setopt PATH_DIRS              # Perform path search for commands with slashes
+setopt AUTO_MENU              # Show completion menu on successive tab
+setopt AUTO_LIST              # Automatically list choices
+setopt AUTO_PARAM_SLASH       # Add slash for directories
+setopt EXTENDED_GLOB          # Needed for file modification glob modifiers with compinit
+unsetopt MENU_COMPLETE        # Don't autoselect first completion
+unsetopt FLOW_CONTROL         # Disable start/stop characters in shell editor
+
+# Completion styles
+zstyle ':completion:*' menu select
+zstyle ':completion:*' matcher-list 'm:{a-zA-Z}={A-Za-z}' 'r:|=*' 'l:|=* r:|=*'
+zstyle ':completion:*' list-colors ${(s.:.)LS_COLORS}
+zstyle ':completion:*' use-cache on
+zstyle ':completion:*' cache-path "${ZDOTDIR:-$HOME}/.zcompcache"
+
+# ==============================================================================
+# Sheldon (Plugin Manager)
+# ==============================================================================
+
+eval "$(sheldon source)"
+
+# ==============================================================================
+# Aliases
+# ==============================================================================
+
 alias ls='ls --color=auto'
 alias ll='ls -l --color=auto'
 alias la='ls -a --color=auto'
 alias lla='ls -la --color=auto'
 alias grep='grep --color=auto'
 
-# # prompt
-# PROMPT='%F{036}%B%n@%m%b%f:%F{038}%~%f$ '
-# #RPROMPT='[%F{green}%d%f]'
-# 
-# # history
-# HISTFILE=~/.zsh_history
-# HISTSIZE=65536
-# SAVEHIST=65536
-# setopt hist_ignore_dups
-# autoload history-search-end
-# #zle -N history-beginning-search-backword-end history-search-end
+# ==============================================================================
+# SSH Completion
+# ==============================================================================
 
-# ssh completion
 function _ssh {
-  compadd `grep 'Host ' ~/.ssh/config --color=none | awk '{print $2}' | sort`;
+  compadd `grep 'Host ' ~/.ssh/config --color=none 2>/dev/null | awk '{print $2}' | sort`
 }
 
 function _ssh_hosts {
-  compadd `grep 'Host ' ~/.ssh/config --color=none | awk '{print $2}' | sort`;
+  compadd `grep 'Host ' ~/.ssh/config --color=none 2>/dev/null | awk '{print $2}' | sort`
 }
 
-# sdkman!
-export SDKMAN_DIR="/home/keita/.sdkman"
-[[ -s "/home/keita/.sdkman/bin/sdkman-init.sh" ]] && source "/home/keita/.sdkman/bin/sdkman-init.sh"
+# ==============================================================================
+# Tool Integrations
+# ==============================================================================
 
-# zplug
-source ~/.zplug/init.zsh
-
-zplug "sorin-ionescu/prezto"
-zplug "felixr/docker-zsh-completion", ignore:"docker-zsh-completion.plugin.zsh"
-zplug "nobeans/zsh-sdkman"
-
-zplug load # --verbose
-
-# apply PATH to binaries that installed in local
-. "$HOME/.local/bin/env"
-
+# local binaries
+[[ -f "$HOME/.local/bin/env" ]] && . "$HOME/.local/bin/env"
 
 # mise
-eval "$(~/.local/bin/mise activate zsh)"
+[[ -x "$HOME/.local/bin/mise" ]] && eval "$(~/.local/bin/mise activate zsh)"
 
 # rust toolchain
-. "$HOME/.cargo/env"
+[[ -f "$HOME/.cargo/env" ]] && . "$HOME/.cargo/env"
 
 # haskell
-[ -f "/home/keis/.ghcup/env" ] && . "/home/keis/.ghcup/env" # ghcup-env
+[[ -f "$HOME/.ghcup/env" ]] && . "$HOME/.ghcup/env"
 
 # neovim
 alias vim=nvim
@@ -68,8 +110,3 @@ export ANDROID_HOME=$HOME/Android/Sdk
 export PATH=$ANDROID_HOME/cmdline-tools/latest/bin:$PATH
 export PATH=$ANDROID_HOME/platform-tools:$PATH
 export PATH=$ANDROID_HOME/emulator:$PATH
-
-# zprof
-# if (which zprof > /dev/null) ;then
-#   zprof | less
-# fi

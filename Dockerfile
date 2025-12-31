@@ -1,26 +1,32 @@
-FROM ubuntu:xenial
+FROM ubuntu:24.04
 
-# Install zsh, neovim, and dependencies
-RUN apt update && apt install -y \
-    software-properties-common git zsh curl xsel locales gawk \
-    make build-essential libssl-dev zlib1g-dev libbz2-dev \
-    libreadline-dev libsqlite3-dev wget curl llvm libncurses5-dev \
-    libncursesw5-dev xz-utils tk-dev;\
-    apt-add-repository -y ppa:neovim-ppa/stable;\
-    apt update;\
-    apt install -y neovim
+ARG USER=testuser
+ARG UID=1001
+ARG GID=1001
 
-# Locale setting
-ENV LANGUAGE=en_US.UTF-8 \
-    LANG=en_US.UTF-8
-RUN locale-gen en_US.UTF-8;\
-    dpkg-reconfigure -f noninteractive locales
+ENV DEBIAN_FRONTEND=noninteractive
+ENV USER=$USER
 
-# 
-RUN useradd -mU -d /home/test -s /bin/zsh test
-COPY . /home/test/.dotfiles
-RUN chown test:test /home/test/.dotfiles/*
+# Install minimal packages
+RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
+    --mount=type=cache,target=/var/lib/apt,sharing=locked \
+    apt-get update && apt-get install -y \
+    git \
+    curl \
+    sudo
 
-WORKDIR /home/test/.dotfiles
-USER test
-CMD /bin/zsh
+# Create non-root user with sudo access
+RUN groupadd -g ${GID} ${USER} \
+    && useradd -m -u ${UID} -g ${GID} -s /bin/bash ${USER} \
+    && echo "${USER} ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers \
+    && echo ${USER}:${USER} | sudo chpasswd
+
+# Copy dotfiles
+COPY --chown=${USER}:${USER} . /home/${USER}/repo/dotfiles/
+
+USER ${USER}
+WORKDIR /home/${USER}/repo/dotfiles
+
+RUN git init
+
+CMD ["bash", "-l"]
