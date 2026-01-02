@@ -3,14 +3,14 @@
 set -euo pipefail
 
 source ./utils
-export PATH="$HOME/.local/bin:$PATH"
+export PATH="$HOME/.local/share/mise/shims:$HOME/.local/bin:$PATH"
 PLATFORM=$(platform)
 TOOLS_PACKAGE_MANAGER=(zsh git tmux fzf unzip)
 TOOLS_MISE=(gh node@lts bun uv ghcup)
 DOTFILES=(
   ".tmux.conf $HOME/.tmux.conf"
   "zsh/.zshenv $HOME/.zshenv"
-  "zsh/.zplug $HOME/.zplug"
+  "zsh/plugins.toml $HOME/.config/sheldon/plugins.toml"
   "nvim $HOME/.config/nvim"
 )
 
@@ -90,10 +90,6 @@ mise_install () {
   local spec="$1"
   local tool="${spec%%@*}"
 
-  if [[ -z "${MISE_ACTIVATE_DONE:-}" ]]; then
-    eval "$(~/.local/bin/mise activate bash)"
-    MISE_ACTIVATE_DONE=1
-  fi
   if ! is_missing "$tool"; then
     info_log "$tool has been installed"
     return 0
@@ -120,21 +116,16 @@ if is_missing mise; then
   curl https://mise.run | sh
 fi
 
-# uv
-if is_missing uv; then
-  curl -LsSf https://astral.sh/uv/install.sh | sh
-  uv python install --default
-fi
-
 # Claude code
 if is_missing claude; then
   curl -fsSL https://claude.ai/install.sh | bash
 fi
 
 # rustup
-. $HOME/.cargo/env
+[[ -f "$HOME/.cargo/env" ]] && . "$HOME/.cargo/env"
 if is_missing rustup; then
-  curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
+  curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
+  . "$HOME/.cargo/env"
 fi
 
 # docker
@@ -188,19 +179,19 @@ for tool in ${TOOLS_PACKAGE_MANAGER[@]}; do
   install_package $tool
 done
 
-info_log "Install tools with the package manager"
+info_log "Install tools with mise"
 for tool in ${TOOLS_MISE[@]}; do
   mise_install $tool
 done
 
 # python
-if [[ "$(which python3)" != *"/.local/bin/"* ]]; then
+if [[ "$(command -v python3)" != *"/.local/bin/"* ]]; then
   info_log "Use uv's python and python3, overwriting the current ones."
   uv python install --default
 fi
 
 # haskell
-if is_missing gcc && ismissing g++ && is_missing make; then
+if [[ ! -f "$HOME/.ghcup/env" ]]; then
   # TODO: support macOS
   install_package build-essential
   ghcup install ghc --set recommended
@@ -210,19 +201,20 @@ if is_missing gcc && ismissing g++ && is_missing make; then
   cp ghcup/ghcup-env ~/.ghcup/env
 fi
 
-
 info_log "Replace dotfiles"
 for entry in "${DOTFILES[@]}"; do
   ensure_symlink $entry
 done
 
 # WSL
-if [ /proc/sys/fs/binfmt_misc/WSLInterop ]; then
+if [[ -f /proc/sys/fs/binfmt_misc/WSLInterop ]]; then
   info_log "WSL detected. Run \"wsl --shutdown\" to apply the settings when it's updated."
-  ensure_symlink wsl.conf /etc/wsl.conf
+  ensure_symlink --sudo wsl.conf /etc/wsl.conf
   # appendWindowsPath is false, so manually set symlink for launching windows apps
   # (vscode only, at the time of writing)
-  ensure_symlink --sudo "/mnt/c/Users/$USER/AppData/Local/Programs/Microsoft VS Code/bin/code" /usr/local/bin/code
+  if [[ -f "/mnt/c/Users/$USER/AppData/Local/Programs/Microsoft VS Code/bin/code" ]]; then
+    ensure_symlink --sudo "/mnt/c/Users/$USER/AppData/Local/Programs/Microsoft VS Code/bin/code" /usr/local/bin/code
+  fi
 fi
 
 info_log "Configure git"
@@ -231,40 +223,51 @@ git config --global user.name "keis94"
 git config --global user.email "keis.vivi@gmail.com"
 git config --global core.editor "nvim"
 
-info_log "Install zplug + prezto"
-export ZPLUG_HOME=$HOME/repo/dotfiles/zsh/.zplug
-[ ! -e $ZPLUG_HOME ] && git clone https://github.com/zplug/zplug $ZPLUG_HOME
-zsh -c """
-  source "$ZPLUG_HOME/init.zsh" || exit 1
-  source "zsh/.zshrc" || exit 1
-  zplug check || zplug install
-"""
-# workaround: setting Prezto config directory after `zplug install`
-ensure_symlink $ZPLUG_HOME/repos/sorin-ionescu/prezto $HOME/.zprezto
+info_log "Install sheldon"
+if is_missing sheldon; then
+  case $PLATFORM in
+    Linux)
+      for package in build-essential libssl-dev pkg-config; do
+        install_package $package
+      done
+      ;;
+    Mac)
+      for package in openssl pkg-config; do
+        install_package $package
+      done
+      ;;
+  esac
+  cargo install sheldon
+fi
+# Initialize sheldon plugins
+zsh -c "sheldon lock"
 
 if ! (locale -a | grep -i en_us.UTF8 > /dev/null 2>&1); then
   case $PLATFORM in
-  Linux)
-    info_log "Generate locale en_US.utf8"
-    sudo locale-gen en_US.utf8
-    ;;
-  Mac)
-    error_log """locale en_US.utf8 is not found. Create it manually
-    see: https://apple.stackexchange.com/questions/384388/how-to-add-a-new-locale-to-macos-catalina
-    """
-    ;;
+    Linux)
+      info_log "Generate locale en_US.utf8"
+      if is_missing locale-gen; then
+        install_package locales
+      fi
+      sudo locale-gen en_US.utf8
+      ;;
+    Mac)
+      error_log """locale en_US.utf8 is not found. Create it manually
+      see: https://apple.stackexchange.com/questions/384388/how-to-add-a-new-locale-to-macos-catalina
+      """
+      ;;
   esac
 fi
 
 # chsh
 current_shell=$(
-  grep $USER /etc/passwd | awk -F':' '{print $7}'
+  grep "$USER" /etc/passwd | awk -F':' '{print $7}'
 )
 zsh_path="$(command -v zsh)"
 if [[ "$current_shell" != "$zsh_path" ]]; then
-  info_log "Set zsh as default shell"
+  info_log "Set zsh as default shell. Input password for chsh:"
   chsh -s "$zsh_path"
 fi
 
-exec zsh -li
+exec zsh -l
 

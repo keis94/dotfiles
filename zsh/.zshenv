@@ -1,16 +1,9 @@
-# zprof
-# zmodload zsh/zprof && zprof
-
-# My setting
+# ZDOTDIR - where zsh looks for config files
 export ZDOTDIR=$HOME/repo/dotfiles/zsh
+
+# Locale
 export LC_ALL='en_US.utf8'
 
-# prezto
-# Ensure that a non-login, non-interactive shell has a defined environment.
-if [[ ( "$SHLVL" -eq 1 && ! -o LOGIN ) && -s "${ZDOTDIR:-$HOME}/.zprofile" ]]; then
-  source "${ZDOTDIR:-$HOME}/.zprofile"
-fi
-
+# XDG Base Directory
 export XDG_CONFIG_HOME=$HOME/.config
 export XDG_DATA_HOME=$HOME/.local/share
-
