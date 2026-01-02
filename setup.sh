@@ -3,7 +3,7 @@
 set -euo pipefail
 
 source ./utils
-export PATH="$HOME/.local/bin:$PATH"
+export PATH="$HOME/.local/share/mise/shims:$HOME/.local/bin:$PATH"
 PLATFORM=$(platform)
 TOOLS_PACKAGE_MANAGER=(zsh git tmux fzf unzip)
 TOOLS_MISE=(gh node@lts bun uv ghcup)
@@ -90,10 +90,6 @@ mise_install () {
   local spec="$1"
   local tool="${spec%%@*}"
 
-  if [[ -z "${MISE_ACTIVATE_DONE:-}" ]]; then
-    eval "$(~/.local/bin/mise activate bash)"
-    MISE_ACTIVATE_DONE=1
-  fi
   if ! is_missing "$tool"; then
     info_log "$tool has been installed"
     return 0
@@ -128,7 +124,7 @@ fi
 # rustup
 [[ -f "$HOME/.cargo/env" ]] && . "$HOME/.cargo/env"
 if is_missing rustup; then
-  curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
+  curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
   . "$HOME/.cargo/env"
 fi
 
@@ -183,19 +179,19 @@ for tool in ${TOOLS_PACKAGE_MANAGER[@]}; do
   install_package $tool
 done
 
-info_log "Install tools with the package manager"
+info_log "Install tools with mise"
 for tool in ${TOOLS_MISE[@]}; do
   mise_install $tool
 done
 
 # python
-if [[ "$(which python3)" != *"/.local/bin/"* ]]; then
+if [[ "$(command -v python3)" != *"/.local/bin/"* ]]; then
   info_log "Use uv's python and python3, overwriting the current ones."
   uv python install --default
 fi
 
 # haskell
-if is_missing gcc && ismissing g++ && is_missing make; then
+if [[ ! -f "$HOME/.ghcup/env" ]]; then
   # TODO: support macOS
   install_package build-essential
   ghcup install ghc --set recommended
@@ -205,14 +201,13 @@ if is_missing gcc && ismissing g++ && is_missing make; then
   cp ghcup/ghcup-env ~/.ghcup/env
 fi
 
-
 info_log "Replace dotfiles"
 for entry in "${DOTFILES[@]}"; do
   ensure_symlink $entry
 done
 
 # WSL
-if [ /proc/sys/fs/binfmt_misc/WSLInterop ]; then
+if [[ -f /proc/sys/fs/binfmt_misc/WSLInterop ]]; then
   info_log "WSL detected. Run \"wsl --shutdown\" to apply the settings when it's updated."
   ensure_symlink --sudo wsl.conf /etc/wsl.conf
   # appendWindowsPath is false, so manually set symlink for launching windows apps
@@ -266,11 +261,11 @@ fi
 
 # chsh
 current_shell=$(
-  grep $USER /etc/passwd | awk -F':' '{print $7}'
+  grep "$USER" /etc/passwd | awk -F':' '{print $7}'
 )
 zsh_path="$(command -v zsh)"
 if [[ "$current_shell" != "$zsh_path" ]]; then
-  info_log "Set zsh as default shell"
+  info_log "Set zsh as default shell. Input password for chsh:"
   chsh -s "$zsh_path"
 fi
 

@@ -1,11 +1,12 @@
 FROM ubuntu:24.04
 
-ARG USER=testuser
+ARG USER=test
 ARG UID=1001
 ARG GID=1001
 
 ENV DEBIAN_FRONTEND=noninteractive
 ENV USER=$USER
+ENV TERM=xterm-256color
 
 # Install minimal packages
 RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
@@ -27,6 +28,7 @@ COPY --chown=${USER}:${USER} . /home/${USER}/repo/dotfiles/
 USER ${USER}
 WORKDIR /home/${USER}/repo/dotfiles
 
+# for running `git config`
 RUN git init
 
 CMD ["bash", "-l"]
