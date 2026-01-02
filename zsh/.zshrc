@@ -58,6 +58,10 @@ zstyle ':completion:*' cache-path "${ZDOTDIR:-$HOME}/.zcompcache"
 # Sheldon (Plugin Manager)
 # ==============================================================================
 
+# rust toolchain
+# it must be loaded before `sheldon source`
+[[ -f "$HOME/.cargo/env" ]] && . "$HOME/.cargo/env"
+
 eval "$(sheldon source)"
 
 # ==============================================================================
@@ -91,9 +95,6 @@ function _ssh_hosts {
 
 # mise
 [[ -x "$HOME/.local/bin/mise" ]] && eval "$(~/.local/bin/mise activate zsh)"
-
-# rust toolchain
-[[ -f "$HOME/.cargo/env" ]] && . "$HOME/.cargo/env"
 
 # haskell
 [[ -f "$HOME/.ghcup/env" ]] && . "$HOME/.ghcup/env"
