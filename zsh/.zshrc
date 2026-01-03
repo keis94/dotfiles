@@ -54,6 +54,9 @@ zstyle ':completion:*' list-colors ${(s.:.)LS_COLORS}
 zstyle ':completion:*' use-cache on
 zstyle ':completion:*' cache-path "${ZDOTDIR:-$HOME}/.zcompcache"
 
+# pure prompt
+zstyle ':prompt:pure:path' color '#005faf'
+
 # ==============================================================================
 # Sheldon (Plugin Manager)
 # ==============================================================================
