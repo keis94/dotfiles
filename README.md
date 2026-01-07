@@ -2,25 +2,25 @@
 
 ## Install
 
-```zsh
-git clone https://github.com/keis94/dotfiles.git ~/.dotfiles
-cd ~/.dotfiles
-./setup.zsh
+```shell
+git clone https://github.com/keis94/dotfiles.git ~/repo/dotfiles
+cd ~/repo/dotfiles
+./setup.sh
 ```
 
 ## Test
 
-When you want to check that `setup.zsh` works well in clean environment, run following commands.
+When you want to check that `setup.sh` works well in clean environment, run following commands.
 
 Local changes in this repository will be applyed in test environment.
 
-```zsh
+```shell
 # In your terminal
-cd ~/.dotfiles
-docker build -t dotfiles-test
-docker run --rm -it dotfiles-test
+cd ~/repo/dotfiles
+docker build -t dotfiles .
+docker run --rm -it dotfiles
 
 # Inside container
-./install.zsh
+./setup.sh
 ```
 

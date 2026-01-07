@@ -6,7 +6,7 @@ source ./utils
 export PATH="$HOME/.local/share/mise/shims:$HOME/.local/bin:$PATH"
 PLATFORM=$(platform)
 TOOLS_PACKAGE_MANAGER=(zsh git tmux fzf unzip)
-TOOLS_MISE=(gh node@lts bun uv ghcup)
+TOOLS_MISE=(usage gh node@lts bun uv ghcup)
 DOTFILES=(
   ".tmux.conf $HOME/.tmux.conf"
   "zsh/.zshenv $HOME/.zshenv"

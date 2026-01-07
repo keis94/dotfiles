@@ -1,10 +1,66 @@
 shell = "zsh"
 
-# Pure prompt
+[templates]
+defer = "{{ hooks?.pre | nl }}{% for file in files %}zsh-defer source \"{{ file }}\"\n{% endfor %}{{ hooks?.post | nl }}"
+
+[plugins.zsh-defer]
+github = "romkatv/zsh-defer"
+
+[plugins.compinit]
+# from https://gist.github.com/ctechols/ca1035271ad134841284
+inline = '''
+_compinit() {
+  local re_initialize=0
+  for match in ${ZDOTDIR:-$HOME}/.zcompdump*(.Nmh+24); do
+    re_initialize=1
+    echo "Re-initializing zsh completions (found stale compdump: $match)"
+    break
+  done
+
+  autoload -Uz compinit
+  if [ "$re_initialize" -eq "1" ]; then
+    compinit -d "${ZDOTDIR:-$HOME}/.zcompdump"
+    # update the timestamp on compdump file
+    compdump
+  else
+    # omit the check for new functions since we updated today
+    compinit -C -d "${ZDOTDIR:-$HOME}/.zcompdump"
+  fi
+}
+_compinit
+'''
+
 [plugins.pure]
 github = "sindresorhus/pure"
 use = ["async.zsh", "pure.zsh"]
 
-# Additional completions
 [plugins.zsh-completions]
 github = "zsh-users/zsh-completions"
+
+[plugins.zsh-autosuggestions]
+github = "zsh-users/zsh-autosuggestions"
+apply = ["defer"]
+
+[plugins.fzf-tab]
+github = "Aloxaf/fzf-tab"
+apply = ["defer"]
+
+# from https://github.com/elecdeer/dotfiles/blob/main/hanger/plugins/on-demand-completion/on-demand-completion.plugin.zsh
+[plugins.on-demand-completion]
+local = "~/repo/dotfiles/zsh/plugins/on-demand-completion"
+
+# Command completion
+[plugins.mise]
+inline = 'on_demand_completion "mise" "mise completion zsh"'
+
+[plugins.docker-completion]
+inline = 'on_demand_completion "docker"'
+
+[plugins.gh-completion]
+inline = 'on_demand_completion "gh" "gh completion -s zsh"'
+
+[plugins.uv-completion]
+inline = 'on_demand_completion "uv" "uv generate-shell-completion zsh"'
+
+[plugins.bun-completion]
+inline = 'on_demand_completion "bun" "bun completions $(mktemp -d) | cat"'

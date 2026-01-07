@@ -1,8 +1,15 @@
 # ZDOTDIR - where zsh looks for config files
 export ZDOTDIR=$HOME/repo/dotfiles/zsh
 
+# Enable zsh profiling
+RUN_ZPROF=${RUN_ZPROF:-false}
+
+if [ "$RUN_ZPROF" = true ]; then
+    zmodload zsh/zprof && zprof
+fi
+
 # Locale
-export LC_ALL='en_US.utf8'
+export LANG='en_US.utf8'
 
 # XDG Base Directory
 export XDG_CONFIG_HOME=$HOME/.config

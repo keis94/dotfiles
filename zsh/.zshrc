@@ -2,6 +2,8 @@
 # Zsh Options (migrated from Prezto)
 # ==============================================================================
 
+eval "$(sheldon source)"
+
 # History
 HISTFILE="${ZDOTDIR:-$HOME}/.zsh_history"
 HISTSIZE=65536
@@ -33,22 +35,17 @@ WORDCHARS='*?_-.[]~&;!#$%^(){}<>'  # Characters treated as part of a word
 # Completion
 # ==============================================================================
 
-autoload -Uz compinit
-compinit -d "${ZDOTDIR:-$HOME}/.zcompdump"
-
-# Completion options (from Prezto)
+# Completion options (based on Prezto)
 setopt COMPLETE_IN_WORD       # Complete from cursor position
 setopt ALWAYS_TO_END          # Move cursor to end after completion
 setopt PATH_DIRS              # Perform path search for commands with slashes
-setopt AUTO_MENU              # Show completion menu on successive tab
-setopt AUTO_LIST              # Automatically list choices
 setopt AUTO_PARAM_SLASH       # Add slash for directories
 setopt EXTENDED_GLOB          # Needed for file modification glob modifiers with compinit
+unsetopt BEEP                 # Keep silent
 unsetopt MENU_COMPLETE        # Don't autoselect first completion
 unsetopt FLOW_CONTROL         # Disable start/stop characters in shell editor
 
 # Completion styles
-zstyle ':completion:*' menu select
 zstyle ':completion:*' matcher-list 'm:{a-zA-Z}={A-Za-z}' 'r:|=*' 'l:|=* r:|=*'
 zstyle ':completion:*' list-colors ${(s.:.)LS_COLORS}
 zstyle ':completion:*' use-cache on
@@ -56,16 +53,6 @@ zstyle ':completion:*' cache-path "${ZDOTDIR:-$HOME}/.zcompcache"
 
 # pure prompt
 zstyle ':prompt:pure:path' color '#005faf'
-
-# ==============================================================================
-# Sheldon (Plugin Manager)
-# ==============================================================================
-
-# rust toolchain
-# it must be loaded before `sheldon source`
-[[ -f "$HOME/.cargo/env" ]] && . "$HOME/.cargo/env"
-
-eval "$(sheldon source)"
 
 # ==============================================================================
 # Aliases
@@ -96,11 +83,11 @@ function _ssh_hosts {
 # local binaries
 [[ -f "$HOME/.local/bin/env" ]] && . "$HOME/.local/bin/env"
 
-# mise
-[[ -x "$HOME/.local/bin/mise" ]] && eval "$(~/.local/bin/mise activate zsh)"
-
 # haskell
 [[ -f "$HOME/.ghcup/env" ]] && . "$HOME/.ghcup/env"
+
+# rust toolchain
+[[ -f "$HOME/.cargo/env" ]] && . "$HOME/.cargo/env"
 
 # neovim
 alias vim=nvim
@@ -114,3 +101,7 @@ export ANDROID_HOME=$HOME/Android/Sdk
 export PATH=$ANDROID_HOME/cmdline-tools/latest/bin:$PATH
 export PATH=$ANDROID_HOME/platform-tools:$PATH
 export PATH=$ANDROID_HOME/emulator:$PATH
+
+if [ "$RUN_ZPROF" = true ]; then
+    zprof | less
+fi
