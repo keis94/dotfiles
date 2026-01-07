@@ -6,11 +6,11 @@ source ./utils
 export PATH="$HOME/.local/share/mise/shims:$HOME/.local/bin:$PATH"
 PLATFORM=$(platform)
 TOOLS_PACKAGE_MANAGER=(zsh git tmux fzf unzip)
-TOOLS_MISE=(usage gh node@lts bun uv ghcup)
 DOTFILES=(
   ".tmux.conf $HOME/.tmux.conf"
   "zsh/.zshenv $HOME/.zshenv"
   "zsh/plugins.toml $HOME/.config/sheldon/plugins.toml"
+  "mise/config.toml $HOME/.config/mise/config.toml"
   "nvim $HOME/.config/nvim"
 )
 
@@ -84,20 +84,6 @@ install_package () {
       brew install "$tool"
       ;;
   esac
-}
-
-mise_install () {
-  local spec="$1"
-  local tool="${spec%%@*}"
-
-  if ! is_missing "$tool"; then
-    info_log "$tool has been installed"
-    return 0
-  fi
-
-  info_log "Installing $tool with mise"
-  mise install "$spec"
-  mise use "$spec" --global
 }
 
 if [ $PLATFORM = 'UNKNOWN' ]; then
@@ -179,10 +165,13 @@ for tool in ${TOOLS_PACKAGE_MANAGER[@]}; do
   install_package $tool
 done
 
-info_log "Install tools with mise"
-for tool in ${TOOLS_MISE[@]}; do
-  mise_install $tool
+info_log "Replace dotfiles"
+for entry in "${DOTFILES[@]}"; do
+  ensure_symlink $entry
 done
+
+info_log "Install tools with mise"
+mise install
 
 # python
 if [[ "$(command -v python3)" != *"/.local/bin/"* ]]; then
@@ -201,11 +190,6 @@ if [[ ! -f "$HOME/.ghcup/env" ]]; then
   cp ghcup/ghcup-env ~/.ghcup/env
 fi
 
-info_log "Replace dotfiles"
-for entry in "${DOTFILES[@]}"; do
-  ensure_symlink $entry
-done
-
 # WSL
 if [[ -f /proc/sys/fs/binfmt_misc/WSLInterop ]]; then
   info_log "WSL detected. Run \"wsl --shutdown\" to apply the settings when it's updated."
@@ -223,22 +207,6 @@ git config --global user.name "keis94"
 git config --global user.email "keis.vivi@gmail.com"
 git config --global core.editor "nvim"
 
-info_log "Install sheldon"
-if is_missing sheldon; then
-  case $PLATFORM in
-    Linux)
-      for package in build-essential libssl-dev pkg-config; do
-        install_package $package
-      done
-      ;;
-    Mac)
-      for package in openssl pkg-config; do
-        install_package $package
-      done
-      ;;
-  esac
-  cargo install sheldon
-fi
 # Initialize sheldon plugins
 zsh -c "sheldon lock"
 

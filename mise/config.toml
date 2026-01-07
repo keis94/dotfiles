@@ -1,0 +1,10 @@
+[tools]
+"aqua:rossmacarthur/sheldon" = "latest"
+bun = "latest"
+gh = "latest"
+ghcup = "latest"
+node = "lts"
+usage = "latest"
+uv = "latest"
+
+[env]
