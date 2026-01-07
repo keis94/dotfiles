@@ -1,8 +1,8 @@
 case ":$PATH:" in
-    *:"/home/keis/.ghcup/bin":*)
+    *:"$HOME/.ghcup/bin":*)
         ;;
     *)
-        export PATH="/home/keis/.ghcup/bin:$PATH"
+        export PATH="$HOME/.ghcup/bin:$PATH"
         ;;
 esac
 case ":$PATH:" in
