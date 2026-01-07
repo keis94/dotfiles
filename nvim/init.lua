@@ -2,6 +2,8 @@
 -- Converted from vimrc
 
 vim.g.mapleader = " "
+vim.g.loaded_netrw = 1
+vim.g.loaded_netrwPlugin = 1
 
 -- XDG environment variables
 local config_home = vim.env.XDG_CONFIG_HOME or vim.fn.expand("$HOME/.config")
