@@ -1,3 +1,6 @@
+# Skip system compinit in /etc/zsh/zshrc (Ubuntu)
+skip_global_compinit=1
+
 # ZDOTDIR - where zsh looks for config files
 export ZDOTDIR=$HOME/repo/dotfiles/zsh
 
