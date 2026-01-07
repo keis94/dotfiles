@@ -45,8 +45,8 @@ vim.keymap.set('n', '<leader>dq', vim.diagnostic.setloclist, opts)
 -- === Haskell Tools固有機能 ===
 -- Hoogleサーチ
 vim.keymap.set('n', '<leader>hs', ht.hoogle.hoogle_signature, opts)
-vim.keymap.set('n', '<leader>hh', function() 
-  ht.hoogle.telescope_hoogle() 
+vim.keymap.set('n', '<leader>hh', function()
+  ht.hoogle.telescope_hoogle()
 end, opts)
 
 -- コード評価（HLSのcode lenses使用）
