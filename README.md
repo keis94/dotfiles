@@ -1,5 +1,19 @@
 # dotfiles
 
+## Adding new tool env files
+
+To load a new tool's env file (e.g., `~/.new-tool/env`) with deferred loading, add the following to `zsh/plugins.toml` in the `[plugins.tool-envs]` section:
+
+```toml
+[plugins.tool-envs]
+inline = '''
+...
+zsh-defer -c '[[ -f "$HOME/.new-tool/env" ]] && . "$HOME/.new-tool/env"'
+'''
+```
+
+Then run `sheldon lock --reinstall` to apply.
+
 ## Install
 
 ```shell

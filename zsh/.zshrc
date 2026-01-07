@@ -76,19 +76,6 @@ function _ssh_hosts {
   compadd `grep 'Host ' ~/.ssh/config --color=none 2>/dev/null | awk '{print $2}' | sort`
 }
 
-# ==============================================================================
-# Tool Integrations
-# ==============================================================================
-
-# local binaries
-[[ -f "$HOME/.local/bin/env" ]] && . "$HOME/.local/bin/env"
-
-# haskell
-[[ -f "$HOME/.ghcup/env" ]] && . "$HOME/.ghcup/env"
-
-# rust toolchain
-[[ -f "$HOME/.cargo/env" ]] && . "$HOME/.cargo/env"
-
 # neovim
 alias vim=nvim
 export PATH="/opt/nvim-linux-x86_64/bin:$PATH"

@@ -45,6 +45,14 @@ apply = ["defer"]
 github = "Aloxaf/fzf-tab"
 apply = ["defer"]
 
+# Tool environment files (deferred loading for faster startup)
+[plugins.tool-envs]
+inline = '''
+zsh-defer -c '[[ -f "$HOME/.local/bin/env" ]] && . "$HOME/.local/bin/env"'
+zsh-defer -c '[[ -f "$HOME/.ghcup/env" ]] && . "$HOME/.ghcup/env"'
+zsh-defer -c '[[ -f "$HOME/.cargo/env" ]] && . "$HOME/.cargo/env"'
+'''
+
 # from https://github.com/elecdeer/dotfiles/blob/main/hanger/plugins/on-demand-completion/on-demand-completion.plugin.zsh
 [plugins.on-demand-completion]
 local = "~/repo/dotfiles/zsh/plugins/on-demand-completion"
