@@ -127,9 +127,5 @@ vim.api.nvim_create_autocmd("BufWritePost", {
 })
 
 -- lazy.vim
--- vim.o.bg = "dark"
 require("config.lazy")
 require("config.lsp")
-
-vim.cmd.colorscheme "everforest"
-
