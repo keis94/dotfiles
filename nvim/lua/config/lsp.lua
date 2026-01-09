@@ -58,6 +58,10 @@ vim.api.nvim_create_autocmd("LspAttach", {
       })
     end
 
+    if client:supports_method("textDocument/rename") then
+      vim.keymap.set("n", "<leader>rn", vim.lsp.buf.rename, { buffer = buf, desc = "LSP Rename" })
+    end
+
     vim.keymap.set("n", "<leader>d", vim.diagnostic.open_float)
   end,
 })

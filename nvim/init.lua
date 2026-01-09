@@ -2,6 +2,7 @@
 -- Converted from vimrc
 
 vim.g.mapleader = " "
+vim.g.maplocalleader = "\\"
 vim.g.loaded_netrw = 1
 vim.g.loaded_netrwPlugin = 1
 
@@ -132,12 +133,3 @@ require("config.lsp")
 
 vim.cmd.colorscheme "everforest"
 
--- keybind
-local builtin = require('telescope.builtin')
-vim.keymap.set('n', '<leader>ff', builtin.find_files, { desc = 'Telescope find files' })
-vim.keymap.set('n', '<leader>fg', builtin.live_grep, { desc = 'Telescope live grep' })
-vim.keymap.set('n', '<leader>fb', builtin.buffers, { desc = 'Telescope buffers' })
-vim.keymap.set('n', '<leader>fh', builtin.help_tags, { desc = 'Telescope help tags' })
-vim.keymap.set('n', '<leader>fkm', builtin.keymaps, { desc = 'Telescope normal mode keymappings' })
-
-vim.keymap.set('n', '<leader>rn', '<cmd>lua vim.lsp.buf.rename()<CR>', { silent = true, desc = 'LSP Rename' })
