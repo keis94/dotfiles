@@ -45,11 +45,12 @@ if vim.fn.exists(":DiffOrig") == 0 then
 end
 
 -- Set filetype for specific extensions
-vim.api.nvim_create_autocmd({ "BufRead", "BufNewFile" }, {
-  pattern = { "*.sage", "*.pyx", "*.spyx" },
-  callback = function()
-    vim.bo.filetype = "python"
-  end
+vim.filetype.add({
+  extension = {
+    sage = "python",
+    pyx = "python",
+    spyx = "python",
+  },
 })
 
 -- Plugin and theme settings
@@ -82,50 +83,7 @@ vim.keymap.set("c", "<C-N>", "<Down>", { noremap = true }) -- Ctrl+N for command
 -- Copy to system clipboard with Ctrl+C in visual mode
 vim.keymap.set("v", "<C-C>", ":w !xsel -ib<CR><CR>", { noremap = true })
 
--- Binary file handling with xxd
-local binary_group = vim.api.nvim_create_augroup("BinaryXXD", { clear = true })
-
-vim.api.nvim_create_autocmd("BufReadPre", {
-  group = binary_group,
-  pattern = "*.bin",
-  callback = function()
-    vim.bo.binary = true
-  end
-})
-
-vim.api.nvim_create_autocmd("BufReadPost", {
-  group = binary_group,
-  pattern = "*",
-  callback = function()
-    if vim.bo.binary then
-      vim.cmd("silent %!xxd -g 1")
-      vim.bo.filetype = "xxd"
-    end
-  end
-})
-
-vim.api.nvim_create_autocmd("BufWritePre", {
-  group = binary_group,
-  pattern = "*",
-  callback = function()
-    if vim.bo.binary then
-      vim.cmd("%!xxd -r")
-      vim.bo.modified = false
-    end
-  end
-})
-
-vim.api.nvim_create_autocmd("BufWritePost", {
-  group = binary_group,
-  pattern = "*",
-  callback = function()
-    if vim.bo.binary then
-      vim.cmd("silent %!xxd -g 1")
-      vim.bo.modified = false
-    end
-  end
-})
-
 -- lazy.vim
 require("config.lazy")
 require("config.lsp")
+require("config.binary")
