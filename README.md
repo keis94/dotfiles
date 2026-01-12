@@ -1,18 +1,48 @@
 # dotfiles
 
-## Adding new tool env files
+## Tool management
 
-To load a new tool's env file (e.g., `~/.new-tool/env`) with deferred loading, add the following to `zsh/plugins.toml` in the `[plugins.tool-envs]` section:
+[mise](https://mise.jdx.dev/) is used for tool management, with the following exceptions:
+
+- **cargo**: Installed directly via rustup. [Using mise provides little benefit](https://mise.jdx.dev/lang/rust.html#rust).
+- **Haskell tools** (ghc, cabal, ...): Managed by ghcup, which is installed via mise.
+
+## Adding command completions
+
+To add command completion, add the following to `zsh/plugins.toml`:
+
+```toml
+[plugins.<command>-completion]
+inline = 'on_demand_completion "<command>" "<completion-generate-command>"'
+```
+
+Examples:
+
+```toml
+# When a completion generation command is available
+[plugins.gh-completion]
+inline = 'on_demand_completion "gh" "gh completion -s zsh"'
+
+# When the command provides completion files itself (e.g., docker)
+[plugins.docker-completion]
+inline = 'on_demand_completion "docker"'
+```
+
+After adding, run `sheldon lock --reinstall` to apply.
+
+## Adding PATH for tools not managed by mise
+
+For tools not managed by mise (e.g., rustup, ghcup), add their env file to `[plugins.tool-envs]` in `zsh/plugins.toml`:
 
 ```toml
 [plugins.tool-envs]
 inline = '''
-...
-zsh-defer -c '[[ -f "$HOME/.new-tool/env" ]] && . "$HOME/.new-tool/env"'
+zsh-defer -c '[[ -f "$HOME/.cargo/env" ]] && . "$HOME/.cargo/env"'
+zsh-defer -c '[[ -f "$HOME/.ghcup/env" ]] && . "$HOME/.ghcup/env"'
 '''
 ```
 
-Then run `sheldon lock --reinstall` to apply.
+After adding, run `sheldon lock --reinstall` to apply.
 
 ## Install
 
