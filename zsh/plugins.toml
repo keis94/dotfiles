@@ -45,7 +45,7 @@ apply = ["defer"]
 github = "Aloxaf/fzf-tab"
 apply = ["defer"]
 
-# Tool environment files (deferred loading for faster startup)
+# Tool environment files that is not managed by mise
 [plugins.tool-envs]
 inline = '''
 zsh-defer -c '[[ -f "$HOME/.local/bin/env" ]] && . "$HOME/.local/bin/env"'
@@ -58,7 +58,7 @@ zsh-defer -c '[[ -f "$HOME/.cargo/env" ]] && . "$HOME/.cargo/env"'
 local = "~/repo/dotfiles/zsh/plugins/on-demand-completion"
 
 # Command completion
-[plugins.mise]
+[plugins.mise-completion]
 inline = 'on_demand_completion "mise" "mise completion zsh"'
 
 [plugins.docker-completion]
