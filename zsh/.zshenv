@@ -17,3 +17,7 @@ export LANG='en_US.utf8'
 # XDG Base Directory
 export XDG_CONFIG_HOME=$HOME/.config
 export XDG_DATA_HOME=$HOME/.local/share
+
+# MISE Trusted Directory
+export MISE_TRUSTED_CONFIG_PATHS=$HOME/ghq/dotfiles/mise:$HOME/repo/dotfiles/mise:$HOME/dotfiles/mise:
+
