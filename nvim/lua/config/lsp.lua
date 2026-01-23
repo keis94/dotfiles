@@ -1,9 +1,3 @@
-vim.opt.completeopt = { "menuone", "preview", "noinsert" }
-
-require("mason-lspconfig").setup({
-  ensure_installed = { "clangd", "lua_ls", "bashls" },
-})
-
 -- 言語サーバーがアタッチされた時に呼ばれる
 vim.api.nvim_create_autocmd("LspAttach", {
   group = vim.api.nvim_create_augroup("my.lsp", {}),
