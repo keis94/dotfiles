@@ -53,37 +53,51 @@ vim.filetype.add({
   },
 })
 
--- Plugin and theme settings
--- vim.g.molokai_original = 1
-
 -- Editor settings
-vim.opt.expandtab = true          -- use spaces instead of tabs
-vim.opt.tabstop = 2               -- number of spaces tabs count for
-vim.opt.softtabstop = 2           -- number of spaces tabs count for in insert mode
-vim.opt.shiftwidth = 2            -- size of an indent
-vim.opt.smartindent = true        -- smart autoindenting
-vim.opt.termguicolors = true      -- enable 24-bit RGB colors (replaces t_Co=256)
-vim.opt.backup = false            -- disable backup (overrides earlier setting)
+vim.opt.expandtab = true     -- use spaces instead of tabs
+vim.opt.tabstop = 2          -- number of spaces tabs count for
+vim.opt.softtabstop = 2      -- number of spaces tabs count for in insert mode
+vim.opt.shiftwidth = 2       -- size of an indent
+vim.opt.smartindent = true   -- smart autoindenting
+vim.opt.termguicolors = true -- enable 24-bit RGB colors (replaces t_Co=256)
+vim.opt.backup = false       -- disable backup (overrides earlier setting)
+vim.opt.number = true        -- show line numbers
+vim.opt.completeopt = { "menuone", "preview", "noinsert" }
+
+-- Clipboard
 vim.opt.clipboard = "unnamedplus" -- use system clipboard
-vim.opt.number = true             -- show line numbers
+
+local function paste()
+  return {
+    vim.fn.split(vim.fn.getreg(""), "\n"),
+    vim.fn.getregtype(""),
+  }
+end
+
+-- https://github.com/neovim/neovim/discussions/28010#discussioncomment-9877494
+vim.g.clipboard = {
+  name = "OSC 52",
+  copy = {
+    ["+"] = require("vim.ui.clipboard.osc52").copy("+"),
+    ["*"] = require("vim.ui.clipboard.osc52").copy("*"),
+  },
+  paste = {
+    ["+"] = paste,
+    ["*"] = paste,
+  },
+}
 
 -- Paste toggle (F5 key)
 vim.keymap.set("n", "<F5>", ":set paste!<CR>", { silent = true, noremap = true })
 vim.keymap.set("i", "<F5>", "<ESC>:set paste!<CR>i", { silent = true, noremap = true })
 
 -- Key remappings
-vim.keymap.set("i", "<C-]>", "<ESC>", { noremap = true })
-vim.keymap.set("v", "<C-]>", "<ESC>", { noremap = true })
 vim.keymap.set("n", "<S-H>", "0", { noremap = true })      -- Shift+H to beginning of line
 vim.keymap.set("n", "<S-L>", "$", { noremap = true })      -- Shift+L to end of line
 vim.keymap.set("n", "m", "%", { noremap = true })          -- m to match brackets
 vim.keymap.set("c", "<C-P>", "<Up>", { noremap = true })   -- Ctrl+P for command history up
 vim.keymap.set("c", "<C-N>", "<Down>", { noremap = true }) -- Ctrl+N for command history down
 
--- Copy to system clipboard with Ctrl+C in visual mode
-vim.keymap.set("v", "<C-C>", ":w !xsel -ib<CR><CR>", { noremap = true })
-
--- lazy.vim
 require("config.lazy")
 require("config.lsp")
 require("config.binary")
