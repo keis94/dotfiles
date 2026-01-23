@@ -1,3 +1,8 @@
+vim.diagnostic.config({
+  virtual_lines = true,
+  underline = true
+})
+
 -- 言語サーバーがアタッチされた時に呼ばれる
 vim.api.nvim_create_autocmd("LspAttach", {
   group = vim.api.nvim_create_augroup("my.lsp", {}),
