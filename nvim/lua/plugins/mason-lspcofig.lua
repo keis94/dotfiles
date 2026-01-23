@@ -12,7 +12,7 @@ return {
       "bashls",
       "jsonls",
       "clangd",
-      "pyright",
+      "ruff",
       "rust_analyzer",
     },
 
