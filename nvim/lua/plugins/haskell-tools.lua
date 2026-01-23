@@ -1,3 +1,5 @@
+---@module 'lazy'
+---@type LazyPluginSpec
 return {
   "mrcjkb/haskell-tools.nvim",
   version = "^6", -- Recommended
