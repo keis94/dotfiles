@@ -62,7 +62,7 @@ vim.opt.smartindent = true   -- smart autoindenting
 vim.opt.termguicolors = true -- enable 24-bit RGB colors (replaces t_Co=256)
 vim.opt.backup = false       -- disable backup (overrides earlier setting)
 vim.opt.number = true        -- show line numbers
-vim.opt.completeopt = { "menuone", "preview", "noinsert" }
+vim.opt.completeopt = { "menuone", "noinsert" }
 
 -- Clipboard
 vim.opt.clipboard = "unnamedplus" -- use system clipboard
