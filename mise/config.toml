@@ -3,6 +3,7 @@
 bun = "latest"
 gh = "latest"
 ghcup = "latest"
+go = "1.25.6"
 node = "lts"
 usage = "latest"
 uv = "latest"
