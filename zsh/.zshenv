@@ -1,8 +1,16 @@
 # Skip system compinit in /etc/zsh/zshrc (Ubuntu)
 skip_global_compinit=1
 
-# ZDOTDIR - where zsh looks for config files
-export ZDOTDIR=$HOME/repo/dotfiles/zsh
+# XDG Base Directory
+export XDG_CONFIG_HOME=$HOME/.config
+export XDG_DATA_HOME=$HOME/.local/share
+export XDG_CACHE_HOME=$HOME/.cache
+export XDG_STATE_HOME=$HOME/.local/state
+
+# .zshenv is a symlink to the dotfiles repository,
+# so ZDOTDIR is set to its zsh directory (found by following the symlink).
+local zshenv_origin_path="${${(%):-%x}:P}"
+export ZDOTDIR=$(dirname "$zshenv_origin_path")
 
 # Enable zsh profiling
 RUN_ZPROF=${RUN_ZPROF:-false}
@@ -14,10 +22,10 @@ fi
 # Locale
 export LANG='en_US.utf8'
 
-# XDG Base Directory
-export XDG_CONFIG_HOME=$HOME/.config
-export XDG_DATA_HOME=$HOME/.local/share
 
 # MISE Trusted Directory
-export MISE_TRUSTED_CONFIG_PATHS=$HOME/ghq/dotfiles/mise:$HOME/repo/dotfiles/mise:$HOME/dotfiles/mise:
+# ./mise needs to be added so that the setup script can run mise install without prompting.
+local mise_config_path="$XDG_CONFIG_HOME/mise/config.toml"
+local mise_config_dir=$(dirname "${mise_config_path:P}")
+export MISE_TRUSTED_CONFIG_PATHS="$mise_config_dir:$XDG_CONFIG_HOME/mise"
 

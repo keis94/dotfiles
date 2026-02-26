@@ -5,11 +5,12 @@ set -euo pipefail
 source ./utils
 export PATH="$HOME/.local/share/mise/shims:$HOME/.local/bin:$PATH"
 PLATFORM=$(platform)
-TOOLS_PACKAGE_MANAGER=(zsh git tmux fzf unzip)
+TOOLS_PACKAGE_MANAGER=(zsh git tmux fzf unzip gpg)
 DOTFILES=(
   ".tmux.conf $HOME/.tmux.conf"
   "zsh/.zshenv $HOME/.zshenv"
   "zsh/plugins.toml $HOME/.config/sheldon/plugins.toml"
+  "zsh/plugins $HOME/.local/share/sheldon/plugins"
   "mise/config.toml $HOME/.config/mise/config.toml"
   "nvim $HOME/.config/nvim"
 )
@@ -171,7 +172,7 @@ for entry in "${DOTFILES[@]}"; do
 done
 
 info_log "Install tools with mise"
-mise install
+zsh -c "cd mise; mise install"
 
 # python
 if [[ "$(command -v python3)" != *"/.local/bin/"* ]]; then

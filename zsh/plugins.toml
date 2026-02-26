@@ -55,7 +55,7 @@ zsh-defer -c '[[ -f "$HOME/.cargo/env" ]] && . "$HOME/.cargo/env"'
 
 # from https://github.com/elecdeer/dotfiles/blob/main/hanger/plugins/on-demand-completion/on-demand-completion.plugin.zsh
 [plugins.on-demand-completion]
-local = "~/repo/dotfiles/zsh/plugins/on-demand-completion"
+local = "~/.local/share/sheldon/plugins/on-demand-completion"
 
 # Command completion
 [plugins.mise-completion]

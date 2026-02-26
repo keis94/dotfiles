@@ -47,8 +47,9 @@ After adding, run `sheldon lock --reinstall` to apply.
 ## Install
 
 ```shell
-git clone https://github.com/keis94/dotfiles.git ~/repo/dotfiles
-cd ~/repo/dotfiles
+# ghq
+git clone https://github.com/keis94/dotfiles.git ~/dotfiles
+cd ~/dotfiles
 ./setup.sh
 ```
 
@@ -60,7 +61,7 @@ Local changes in this repository will be applyed in test environment.
 
 ```shell
 # In your terminal
-cd ~/repo/dotfiles
+cd ~/dotfiles
 docker build -t dotfiles .
 docker run --rm -it dotfiles
 

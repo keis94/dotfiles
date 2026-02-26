@@ -23,10 +23,10 @@ RUN groupadd -g ${GID} ${USER} \
     && echo ${USER}:${USER} | sudo chpasswd
 
 # Copy dotfiles
-COPY --chown=${USER}:${USER} . /home/${USER}/repo/dotfiles/
+COPY --chown=${USER}:${USER} . /home/${USER}/dotfiles/
 
 USER ${USER}
-WORKDIR /home/${USER}/repo/dotfiles
+WORKDIR /home/${USER}/dotfiles
 
 # for running `git config`
 RUN git init
