@@ -44,6 +44,11 @@ zsh-defer -c '[[ -f "$HOME/.ghcup/env" ]] && . "$HOME/.ghcup/env"'
 
 After adding, run `sheldon lock --reinstall` to apply.
 
+## WSL Notes
+
+- **WezTerm**: Install WezTerm on the Windows side. The config is symlinked to `/mnt/c/Users/<username>/.config/wezterm`.
+- **Username**: The Windows username and the WSL username must match.
+
 ## Install
 
 ```shell

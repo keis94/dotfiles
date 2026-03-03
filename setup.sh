@@ -195,11 +195,14 @@ fi
 if [[ -f /proc/sys/fs/binfmt_misc/WSLInterop ]]; then
   info_log "WSL detected. Run \"wsl --shutdown\" to apply the settings when it's updated."
   ensure_symlink --sudo wsl.conf /etc/wsl.conf
+  ensure_symlink wezterm "/mnt/c/Users/$USER/.config/wezterm"
   # appendWindowsPath is false, so manually set symlink for launching windows apps
   # (vscode only, at the time of writing)
   if [[ -f "/mnt/c/Users/$USER/AppData/Local/Programs/Microsoft VS Code/bin/code" ]]; then
     ensure_symlink --sudo "/mnt/c/Users/$USER/AppData/Local/Programs/Microsoft VS Code/bin/code" /usr/local/bin/code
   fi
+else
+  ensure_symlink wezterm "$HOME/.config/wezterm"
 fi
 
 info_log "Configure git"
