@@ -46,7 +46,8 @@ After adding, run `sheldon lock --reinstall` to apply.
 
 ## WSL Notes
 
-- **WezTerm**: Install WezTerm on the Windows side. The config is symlinked to `/mnt/c/Users/<username>/.config/wezterm`.
+- **WezTerm**: Install WezTerm on the Windows side. After running `setup.sh`, execute the
+  displayed PowerShell command **as Administrator** to create the config symlink.
 - **Username**: The Windows username and the WSL username must match.
 
 ## Install

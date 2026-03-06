@@ -19,3 +19,7 @@ info_log () {
 error_log () {
   printf '\033[38;5;196m[-] %s\033[0m\n' "$*"
 }
+
+warn_log () {
+  printf '\033[38;5;220m[!] %s\033[0m\n' "$*"
+}

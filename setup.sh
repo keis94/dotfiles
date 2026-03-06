@@ -195,11 +195,24 @@ fi
 if [[ -f /proc/sys/fs/binfmt_misc/WSLInterop ]]; then
   info_log "WSL detected. Run \"wsl --shutdown\" to apply the settings when it's updated."
   ensure_symlink --sudo wsl.conf /etc/wsl.conf
-  ensure_symlink wezterm "/mnt/c/Users/$USER/.config/wezterm"
   # appendWindowsPath is false, so manually set symlink for launching windows apps
   # (vscode only, at the time of writing)
   if [[ -f "/mnt/c/Users/$USER/AppData/Local/Programs/Microsoft VS Code/bin/code" ]]; then
     ensure_symlink --sudo "/mnt/c/Users/$USER/AppData/Local/Programs/Microsoft VS Code/bin/code" /usr/local/bin/code
+  fi
+  # Remind user to create Windows-native symlink manually (requires admin privileges)
+  WIN_TARGET=$(wslpath -w "$(realpath "$(dirname "$0")/wezterm")")
+  WIN_DEST="C:\\Users\\$USER\\.config\\wezterm"
+  WIN_DEST_LINUX="/mnt/c/Users/$USER/.config/wezterm"
+  if [[ ! -L "$WIN_DEST_LINUX" ]]; then
+    warn_log "================================================================"
+    warn_log "ACTION REQUIRED: Create wezterm symlink as Administrator"
+    warn_log ""
+    warn_log "Run the following in PowerShell (as Administrator):"
+    warn_log ""
+    printf '\033[38;5;220m[!]   \033[1mNew-Item -Force -ItemType SymbolicLink -Path "%s" -Target "%s"\033[0m\n' "$WIN_DEST" "$WIN_TARGET"
+    warn_log ""
+    warn_log "================================================================"
   fi
 else
   ensure_symlink wezterm "$HOME/.config/wezterm"
