@@ -182,8 +182,9 @@ fi
 
 # haskell
 if [[ ! -f "$HOME/.ghcup/env" ]]; then
-  # TODO: support macOS
-  install_package build-essential
+  if [[ "$PLATFORM" == "Linux" ]]; then
+    install_package build-essential
+  fi
   ghcup install ghc --set recommended
   ghcup install cabal --set recommended
   ghcup install hls --set recommended
