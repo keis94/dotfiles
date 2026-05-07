@@ -20,8 +20,7 @@ if [ "$RUN_ZPROF" = true ]; then
 fi
 
 # Locale
-export LANG='en_US.utf8'
-
+export LANG="en_US.UTF-8"
 
 # MISE Trusted Directory
 # ./mise needs to be added so that the setup script can run mise install without prompting.

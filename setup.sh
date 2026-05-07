@@ -227,17 +227,17 @@ git config --global core.editor "nvim"
 # Initialize sheldon plugins
 zsh -c "sheldon lock"
 
-if ! (locale -a | grep -i en_us.UTF8 > /dev/null 2>&1); then
+if ! (locale -a | grep -i en_us.UTF-8 > /dev/null 2>&1); then
   case $PLATFORM in
     Linux)
-      info_log "Generate locale en_US.utf8"
+      info_log "Generate locale en_US.UTF-8"
       if is_missing locale-gen; then
         install_package locales
       fi
-      sudo locale-gen en_US.utf8
+      sudo locale-gen en_US.UTF-8
       ;;
     Mac)
-      error_log """locale en_US.utf8 is not found. Create it manually
+      error_log """locale en_US.UTF-8 is not found. Create it manually
       see: https://apple.stackexchange.com/questions/384388/how-to-add-a-new-locale-to-macos-catalina
       """
       ;;
