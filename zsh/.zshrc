@@ -78,7 +78,14 @@ function _ssh_hosts {
 
 # neovim
 alias vim=nvim
-export PATH="/opt/nvim-linux-x86_64/bin:$PATH"
+case $(uname) in
+  "Linux")
+    export PATH="/opt/nvim-linux-x86_64/bin:$PATH"
+    ;;
+  "Darwin")
+    export PATH="/opt/nvim-macos-arm64/bin:$PATH"
+    ;;
+esac
 
 # git
 export GIT_SSH_COMMAND='ssh -i ~/.ssh/id_rsa -o IdentitiesOnly=yes'
