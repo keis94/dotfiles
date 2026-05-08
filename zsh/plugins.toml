@@ -6,6 +6,14 @@ defer = "{{ hooks?.pre | nl }}{% for file in files %}zsh-defer source \"{{ file 
 [plugins.zsh-defer]
 github = "romkatv/zsh-defer"
 
+[plugins.zsh-completions]
+github = "zsh-users/zsh-completions"
+
+[plugins.ghq-completion]
+github = "x-motemen/ghq"
+dir = "misc/zsh"
+apply = ["fpath"]
+
 [plugins.compinit]
 # from https://gist.github.com/ctechols/ca1035271ad134841284
 inline = '''
@@ -33,9 +41,6 @@ _compinit
 [plugins.pure]
 github = "sindresorhus/pure"
 use = ["async.zsh", "pure.zsh"]
-
-[plugins.zsh-completions]
-github = "zsh-users/zsh-completions"
 
 [plugins.zsh-autosuggestions]
 github = "zsh-users/zsh-autosuggestions"
@@ -72,3 +77,5 @@ inline = 'on_demand_completion "uv" "uv generate-shell-completion zsh"'
 
 [plugins.bun-completion]
 inline = 'on_demand_completion "bun" "bun completions $(mktemp -d) | cat"'
+
+
