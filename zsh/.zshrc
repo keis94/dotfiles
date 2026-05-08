@@ -65,6 +65,29 @@ alias lla='ls -la --color=auto'
 alias grep='grep --color=auto'
 
 # ==============================================================================
+# Repository Navigation (ghq + fzf)
+# ==============================================================================
+
+function repo {
+  local root="$(ghq root)"
+  if [[ -n "$1" ]]; then
+    cd "$root/$1"
+  else
+    local selected
+    selected=$(ghq list | fzf)
+    [[ -n "$selected" ]] && cd "$root/$selected"
+  fi
+}
+
+function _repo {
+  local -a repos
+  repos=(${(f)"$(ghq list)"})
+  _describe 'repository' repos
+}
+
+compdef _repo repo
+
+# ==============================================================================
 # SSH Completion
 # ==============================================================================
 
