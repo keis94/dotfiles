@@ -1,6 +1,7 @@
 [tools]
 "aqua:rossmacarthur/sheldon" = "latest"
 bun = "latest"
+fzf = "latest"
 gh = "latest"
 ghcup = "latest"
 ghq = "latest"
