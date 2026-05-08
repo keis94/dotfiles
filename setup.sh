@@ -141,7 +141,7 @@ EOF
       ;;
     Mac)
       info_log "install colima instead of Docker Desktop"
-      brew install colima
+      brew install colima docker docker-buildx
       ;;
   esac
 fi
