@@ -51,8 +51,13 @@ zstyle ':completion:*' list-colors ${(s.:.)LS_COLORS}
 zstyle ':completion:*' use-cache on
 zstyle ':completion:*' cache-path "${ZDOTDIR:-$HOME}/.zcompcache"
 
-# fzf-tab
-zstyle ':fzf-tab:*' fzf-flags '--pointer=>' '--marker=+'
+# fzf: use ASCII glyphs to avoid tofu for fzf >= 0.72 unicode defaults.
+# '>' must be quoted: fzf parses FZF_DEFAULT_OPTS shell-style, so a bare > is
+# eaten as a redirect. Keep FZF_DEFAULT_OPTS to appearance flags only since
+# fzf-tab inherits it via use-fzf-default-opts (e.g. --preview would conflict
+# with fzf-tab's own fzf-preview zstyle).
+export FZF_DEFAULT_OPTS="--no-unicode --pointer='>' --marker=+"
+zstyle ':fzf-tab:*' use-fzf-default-opts yes
 
 # pure prompt
 zstyle ':prompt:pure:path' color '#005faf'
