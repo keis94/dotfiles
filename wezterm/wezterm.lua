@@ -10,6 +10,7 @@ config.use_ime = true
 config.font_size = 12.0
 config.colors = require('colorscheme.everforest_dark_hard')
 config.adjust_window_size_when_changing_font_size = false
+config.audible_bell = 'SystemBeep'
 
 if wezterm.target_triple:find('windows') then
   config.default_prog = { 'pwsh' }
