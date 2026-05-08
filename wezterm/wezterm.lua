@@ -51,6 +51,27 @@ config.keys = {
   { key = '/', mods = 'LEADER', action = act.Search 'CurrentSelectionOrEmptyString' },
 }
 
+if wezterm.target_triple:find('darwin') then
+  -- Mac環境向け：Cmd を Alt(Meta) の Readline ショートカットに変換
+  -- karabiner elements で Cmd -> Option を変更すると Option + Tab で App Switcher を開く設定が書けなかったので
+  local readline_cmd_to_alt = {
+    -- Alt + b : 1単語戻る (backward-word)
+    { key = 'b',         mods = 'CMD', action = act.SendKey { key = 'b', mods = 'ALT' } },
+    -- Alt + f : 1単語進む (forward-word)
+    { key = 'f',         mods = 'CMD', action = act.SendKey { key = 'f', mods = 'ALT' } },
+    -- Alt + d : カーソル位置から単語の末尾まで削除 (kill-word)
+    { key = 'd',         mods = 'CMD', action = act.SendKey { key = 'd', mods = 'ALT' } },
+    -- Alt + Backspace : カーソル位置から単語の先頭まで削除 (backward-kill-word)
+    { key = 'Backspace', mods = 'CMD', action = act.SendKey { key = 'Backspace', mods = 'ALT' } },
+    -- Alt + t : カーソル位置の単語と、その直前の単語を入れ替える (transpose-words)
+    { key = 't',         mods = 'CMD', action = act.SendKey { key = 't', mods = 'ALT' } },
+  }
+
+  for _, binding in ipairs(readline_cmd_to_alt) do
+    table.insert(config.keys, binding)
+  end
+end
+
 config.key_tables = {
   copy_mode = {
     { key = '[',          mods = 'CTRL',  action = act.CopyMode 'Close' },
