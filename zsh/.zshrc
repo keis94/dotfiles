@@ -51,6 +51,9 @@ zstyle ':completion:*' list-colors ${(s.:.)LS_COLORS}
 zstyle ':completion:*' use-cache on
 zstyle ':completion:*' cache-path "${ZDOTDIR:-$HOME}/.zcompcache"
 
+# fzf-tab
+zstyle ':fzf-tab:*' fzf-flags '--pointer=>' '--marker=+'
+
 # pure prompt
 zstyle ':prompt:pure:path' color '#005faf'
 
