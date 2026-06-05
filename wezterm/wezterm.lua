@@ -11,6 +11,7 @@ config.font_size = 12.0
 config.colors = require('colorscheme.everforest_dark_hard')
 config.adjust_window_size_when_changing_font_size = false
 config.audible_bell = 'SystemBeep'
+config.skip_close_confirmation_for_processes_named = {}
 
 if wezterm.target_triple:find('windows') then
   config.default_prog = { 'pwsh' }
@@ -27,18 +28,55 @@ end
 -- config.term = 'wezterm'
 config.debug_key_events = true
 config.leader = { key = 'j', mods = 'CTRL' }
+
+local function next_pane(window, pane)
+  local tab = window:active_tab()
+  local panes = tab:panes()
+  local current_id = pane:pane_id()
+  for i, p in ipairs(panes) do
+    if p:pane_id() == current_id then
+      panes[(i % #panes) + 1]:activate()
+      return
+    end
+  end
+end
+
+local function break_pane_to_tab(window, pane)
+  local tab = window:active_tab()
+  if #tab:panes() <= 1 then return end
+  pane:move_to_new_tab()
+end
+
 config.keys = {
   -- tab, pane (tmux like)
   { key = 'c',  mods = 'LEADER',       action = act.SpawnTab 'CurrentPaneDomain' },
   { key = 'n',  mods = 'LEADER',       action = act.ActivateTabRelative(1) },
   { key = 'p',  mods = 'LEADER',       action = act.ActivateTabRelative(-1) },
-  { key = 'x',  mods = 'LEADER',       action = act.CloseCurrentTab { confirm = true } },
+  { key = 't',  mods = 'LEADER',       action = act.ActivateLastTab },
+  { key = 'w',  mods = 'LEADER',       action = act.ShowTabNavigator },
+  { key = 'x',  mods = 'LEADER',       action = act.CloseCurrentPane { confirm = true } },
+  { key = 'X',  mods = 'LEADER|SHIFT', action = act.CloseCurrentTab { confirm = true } },
   { key = '\"', mods = 'LEADER|SHIFT', action = act.SplitVertical { domain = 'CurrentPaneDomain' } },
   { key = '%',  mods = 'LEADER|SHIFT', action = act.SplitHorizontal { domain = 'CurrentPaneDomain' } },
   { key = 'h',  mods = 'LEADER',       action = act.ActivatePaneDirection 'Left' },
   { key = 'j',  mods = 'LEADER',       action = act.ActivatePaneDirection 'Down' },
   { key = 'k',  mods = 'LEADER',       action = act.ActivatePaneDirection 'Up' },
   { key = 'l',  mods = 'LEADER',       action = act.ActivatePaneDirection 'Right' },
+  { key = 'o',  mods = 'LEADER',       action = wezterm.action_callback(next_pane) },
+  { key = 'q',  mods = 'LEADER',       action = act.PaneSelect {} },
+  { key = '{',  mods = 'LEADER|SHIFT', action = act.RotatePanes 'CounterClockwise' },
+  { key = '}',  mods = 'LEADER|SHIFT', action = act.RotatePanes 'Clockwise' },
+  { key = '!',  mods = 'LEADER|SHIFT', action = wezterm.action_callback(break_pane_to_tab) },
+  { key = '1',  mods = 'LEADER',       action = act.ActivateTab(0) },
+  { key = '2',  mods = 'LEADER',       action = act.ActivateTab(1) },
+  { key = '3',  mods = 'LEADER',       action = act.ActivateTab(2) },
+  { key = '4',  mods = 'LEADER',       action = act.ActivateTab(3) },
+  { key = '5',  mods = 'LEADER',       action = act.ActivateTab(4) },
+  { key = '6',  mods = 'LEADER',       action = act.ActivateTab(5) },
+  { key = '7',  mods = 'LEADER',       action = act.ActivateTab(6) },
+  { key = '8',  mods = 'LEADER',       action = act.ActivateTab(7) },
+  { key = '9',  mods = 'LEADER',       action = act.ActivateTab(8) },
+  { key = '0',  mods = 'LEADER',       action = act.ActivateTab(9) },
 
   -- Open PowerShell
   {
