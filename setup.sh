@@ -13,6 +13,8 @@ DOTFILES=(
   "zsh/plugins $HOME/.local/share/sheldon/plugins"
   "mise/config.toml $HOME/.config/mise/config.toml"
   "nvim $HOME/.config/nvim"
+  "claude/scripts/statusline.sh $HOME/.claude/scripts/statusline.sh"
+  "claude/keybindings.json $HOME/.claude/keybindings.json"
 )
 
 is_missing () {
@@ -173,6 +175,21 @@ done
 
 info_log "Install tools with mise"
 zsh -c "cd mise; mise install"
+
+# Claude Code statusline (script is symlinked above; point settings.json at it)
+info_log "Enable dotfiles-managed Claude Code statusline"
+CLAUDE_SETTINGS="$HOME/.claude/settings.json"
+CLAUDE_STATUSLINE_CMD="bash $HOME/.claude/scripts/statusline.sh"
+mkdir -p "$(dirname "$CLAUDE_SETTINGS")"
+if [[ -f "$CLAUDE_SETTINGS" ]]; then
+  CLAUDE_SETTINGS_TMP=$(mktemp)
+  jq --arg cmd "$CLAUDE_STATUSLINE_CMD" \
+    '.statusLine = {type: "command", command: $cmd}' "$CLAUDE_SETTINGS" > "$CLAUDE_SETTINGS_TMP" \
+    && mv "$CLAUDE_SETTINGS_TMP" "$CLAUDE_SETTINGS"
+else
+  jq -n --arg cmd "$CLAUDE_STATUSLINE_CMD" \
+    '{statusLine: {type: "command", command: $cmd}}' > "$CLAUDE_SETTINGS"
+fi
 
 # python
 if [[ "$(command -v python3)" != *"/.local/bin/"* ]]; then
