@@ -8,6 +8,18 @@
         "ctrl+j": "chat:submit",
         "enter": "chat:newline"
       }
+    },
+    {
+      "context": "Confirmation",
+      "bindings": {
+        "ctrl+j": "confirm:yes"
+      }
+    },
+    {
+      "context": "Select",
+      "bindings": {
+        "ctrl+j": "select:accept"
+      }
     }
   ]
 }
