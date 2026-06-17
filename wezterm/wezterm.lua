@@ -12,7 +12,10 @@ config.colors = require('colorscheme.everforest_dark_hard')
 config.adjust_window_size_when_changing_font_size = false
 config.audible_bell = 'SystemBeep'
 config.skip_close_confirmation_for_processes_named = {}
-config.enable_kitty_keyboard = true
+-- enable_kitty_keyboard は有効にしない。
+-- Google IME で変換確定前が1文字のとき、確定時に文字が消える不具合の原因になるため。
+-- Ctrl+Enter の区別は下の config.keys で Ctrl+J(\x0a) を送る方式で代替している。
+-- config.enable_kitty_keyboard = true
 
 if wezterm.target_triple:find('windows') then
   config.default_prog = { 'pwsh' }
@@ -49,6 +52,10 @@ local function break_pane_to_tab(window, pane)
 end
 
 config.keys = {
+  -- Ctrl+Enter を Ctrl+J(\x0a=LF) として送る。
+  -- kitty keyboard protocol なしで Enter(CR) と区別させるため（Claude Code 側で ctrl+j に割当）。
+  { key = 'Enter', mods = 'CTRL', action = act.SendKey { key = 'j', mods = 'CTRL' } },
+
   -- tab, pane (tmux like)
   { key = 'c',  mods = 'LEADER',       action = act.SpawnTab 'CurrentPaneDomain' },
   { key = 'n',  mods = 'LEADER',       action = act.ActivateTabRelative(1) },
