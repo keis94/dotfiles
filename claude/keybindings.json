@@ -20,6 +20,12 @@
       "bindings": {
         "ctrl+j": "select:accept"
       }
+    },
+    {
+      "context": "Footer",
+      "bindings": {
+        "ctrl+f": "footer:openSelected"
+      }
     }
   ]
 }
