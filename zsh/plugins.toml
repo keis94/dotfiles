@@ -50,6 +50,14 @@ apply = ["defer"]
 github = "Aloxaf/fzf-tab"
 apply = ["defer"]
 
+# fzf-tab の -ftb-fzf は fzf 起動直前に typeahead を吸うため `dd bs=1G`(1GBバッファ)を毎回実行する。
+# WSL ではこの 1GB 確保に ~0.6〜1 秒かかり、候補が複数の補完が毎回停止する。
+# typeahead は tty バッファ上限(数KB)までしか来ないので bs を 1M に縮小すれば取りこぼしなく高速化できる。
+# プラグイン本体は編集せず、メモリ上の関数定義を書き換える(sheldon 更新後も維持/将来 upstream 修正時は no-op)。
+# zsh-defer は登録順に実行されるため、上の fzf-tab がロードされた後にこのパッチが走る。
+[plugins.fzf-tab-dd-fix]
+inline = "zsh-defer -c 'autoload +X -- -ftb-fzf 2>/dev/null && functions[-ftb-fzf]=${functions[-ftb-fzf]//bs=1G/bs=1M}'"
+
 # Tool environment files that is not managed by mise
 [plugins.tool-envs]
 inline = '''
