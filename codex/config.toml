@@ -1,0 +1,23 @@
+# Dotfiles-managed keys merged into ~/.codex/config.toml by codex/merge-config.py.
+# The live file is owned by Codex itself (machine-local state), so this fragment
+# is merged in rather than symlinked. Values here win on every setup.sh run.
+
+[tui]
+status_line = [
+  "model-with-reasoning",
+  "used-tokens",
+  "context-window-size",
+  "context-used",
+  "five-hour-limit",
+  "weekly-limit",
+]
+
+[tui.keymap.composer]
+# wezterm converts Ctrl+Enter to Ctrl+J (wezterm.lua), same trick as Claude Code.
+# ctrl-enter is also bound directly for kitty-keyboard-protocol terminals.
+submit = ["ctrl-j", "ctrl-enter"]
+
+[tui.keymap.editor]
+# Default bindings minus ctrl-j — binding it both here and in composer.submit
+# fails Codex's keymap conflict validation.
+insert_newline = ["enter", "shift-enter", "alt-enter", "ctrl-m"]

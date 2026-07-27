@@ -196,6 +196,10 @@ else
     '{statusLine: {type: "command", command: $cmd}}' > "$CLAUDE_SETTINGS"
 fi
 
+# Codex CLI settings (config.toml is owned by Codex; merge managed keys in)
+info_log "Enable dotfiles-managed Codex CLI settings"
+uv run --with tomlkit python3 codex/merge-config.py codex/config.toml "$HOME/.codex/config.toml"
+
 # python
 if [[ "$(command -v python3)" != *"/.local/bin/"* ]]; then
   info_log "Use uv's python and python3, overwriting the current ones."
