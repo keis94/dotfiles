@@ -12,5 +12,6 @@ node = "lts"
 ripgrep = "latest"
 usage = "latest"
 uv = "latest"
+awscli = { version = "2.35.23", symlink_bins = "true" }
 
 [env]
