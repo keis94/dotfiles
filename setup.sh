@@ -11,6 +11,7 @@ DOTFILES=(
   "zsh/.zshenv $HOME/.zshenv"
   "zsh/plugins.toml $HOME/.config/sheldon/plugins.toml"
   "zsh/plugins $HOME/.local/share/sheldon/plugins"
+  "git/ignore $HOME/.config/git/ignore"
   "mise/config.toml $HOME/.config/mise/config.toml"
   "nvim $HOME/.config/nvim"
   "claude/scripts/statusline.sh $HOME/.claude/scripts/statusline.sh"
@@ -95,6 +96,9 @@ if [ $PLATFORM = 'UNKNOWN' ]; then
 fi
 
 if [ $PLATFORM = 'Mac' ]; then
+  info_log 'Disable .DS_Store files on network shares'
+  defaults write com.apple.desktopservices DSDontWriteNetworkStores -bool true
+
   info_log 'Installing brew'
   # /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh)"
 fi
@@ -282,4 +286,3 @@ if [[ "$current_shell" != "$zsh_path" ]]; then
 fi
 
 exec zsh -l
-
