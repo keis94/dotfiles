@@ -32,18 +32,18 @@ def main():
     fragment_path, target_path = sys.argv[1], sys.argv[2]
 
     with open(fragment_path, encoding="utf-8") as f:
-        fragment = tomlkit.parse(f.read())
+        fragment_text = f.read()
+    fragment = tomlkit.parse(fragment_text)
 
     if os.path.exists(target_path):
         with open(target_path, encoding="utf-8") as f:
             original = f.read()
         doc = tomlkit.parse(original)
+        deep_merge(doc, fragment)
+        merged = tomlkit.dumps(doc)
     else:
         original = None
-        doc = tomlkit.document()
-
-    deep_merge(doc, fragment)
-    merged = tomlkit.dumps(doc)
+        merged = fragment_text
 
     if merged == original:
         return 0
