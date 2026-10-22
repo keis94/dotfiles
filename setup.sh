@@ -13,6 +13,7 @@ DOTFILES=(
   "zsh/plugins $HOME/.local/share/sheldon/plugins"
   "git/ignore $HOME/.config/git/ignore"
   "mise/config.toml $HOME/.config/mise/config.toml"
+  "mise/mise.lock $HOME/.config/mise/mise.lock"
   "nvim $HOME/.config/nvim"
   "claude/scripts/statusline.sh $HOME/.claude/scripts/statusline.sh"
   "claude/keybindings.json $HOME/.claude/keybindings.json"
