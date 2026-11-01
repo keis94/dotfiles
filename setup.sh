@@ -120,6 +120,11 @@ if is_missing codex; then
   curl -fsSL https://chatgpt.com/codex/install.sh | sh
 fi
 
+# Antigravity CLI
+if is_missing agy; then
+  curl -fsSL https://antigravity.google/cli/install.sh | bash
+fi
+
 # rustup
 [[ -f "$HOME/.cargo/env" ]] && . "$HOME/.cargo/env"
 if is_missing rustup; then
