@@ -1,1 +1,13 @@
 .git/
+
+# Local configuration, histories, and caches
+.env
+.env.local
+.env.*.local
+**/.claude
+codex/__pycache__/
+nvim/.netrwhist
+zsh/.zcompcache
+zsh/.zcompdump*
+zsh/.zsh_history
+zsh/.zsh_sessions/

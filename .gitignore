@@ -4,3 +4,9 @@ zsh/.zcompdump*
 zsh/.zsh_history
 zsh/.zsh_sessions/
 .claude
+
+# Local configuration and generated files
+/.env
+/.env.local
+/.env.*.local
+codex/__pycache__/
